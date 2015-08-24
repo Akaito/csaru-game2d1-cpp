@@ -74,17 +74,31 @@ int main (int argc, char ** argv) {
     ref(argc);
     ref(argv);
 
+    // initialize and load
     if (!init())
         return 1;
     if (!loadMedia())
         return 1;
 
-    SDL_FillRect(g_windowSurface, nullptr /* rect */, SDL_MapRGB(g_windowSurface->format, 0x00, 0x00, 0x3F));
-    SDL_BlitSurface(g_testImage, nullptr /* srcRect */, g_windowSurface, nullptr /* destRect */);
-    SDL_UpdateWindowSurface(g_window);
+    bool readyToQuit = false;
+    SDL_Event e;
 
-    SDL_Delay(2000);
+    while (!readyToQuit) {
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT)
+                readyToQuit = true;
+        }
 
+        // draw
+        SDL_FillRect(g_windowSurface, nullptr /* rect */, SDL_MapRGB(g_windowSurface->format, 0x00, 0x00, 0x3F));
+        SDL_BlitSurface(g_testImage, nullptr /* srcRect */, g_windowSurface, nullptr /* destRect */);
+        SDL_UpdateWindowSurface(g_window);
+    }
+
+    // wait
+    //SDL_Delay(2000);
+
+    // quit
     close();
     return 0;
 
