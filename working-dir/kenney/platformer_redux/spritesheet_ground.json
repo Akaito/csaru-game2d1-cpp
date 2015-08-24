@@ -1,0 +1,1196 @@
+{
+    "spritesheet": {
+        "name": "kenny platform redux ground",
+        "imageFile": "kenney/platformer_redux/spritesheet_ground.png",
+        "animations": [
+            {
+                "name": "dirt",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 384,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtCenter",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 256,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtCenter_rounded",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 128,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtCliffAlt_left",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 0,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtCliffAlt_right",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 1920,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtCliff_left",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 1792,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtCliff_right",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 1664,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtCorner_left",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 1536,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtCorner_right",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 1408,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtHalf",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 1280,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtHalf_left",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 1152,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtHalf_mid",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 1024,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtHalf_right",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 896,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtHill_left",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 768,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtHill_right",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 640,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtLeft",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 512,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtMid",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 384,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "dirtRight",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 256,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grass",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 128,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassCenter",
+                "frames": [
+                    {
+                        "x": 128,
+                        "y": 0,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassCenter_round",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 1920,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassCliffAlt_left",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 1792,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassCliffAlt_right",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 1664,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassCliff_left",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 1536,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassCliff_right",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 1408,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassCorner_left",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 1280,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassCorner_right",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 1152,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassHalf",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 1024,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassHalf_left",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 896,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassHalf_mid",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 768,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassHalf_right",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 640,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassHill_left",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 512,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassHill_right",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 384,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassLeft",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 256,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassMid",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 128,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "grassRight",
+                "frames": [
+                    {
+                        "x": 0,
+                        "y": 0,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planet",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 640,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetCenter",
+                "frames": [
+                    {
+                        "x": 768,
+                        "y": 1280,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetCenter_rounded",
+                "frames": [
+                    {
+                        "x": 768,
+                        "y": 1152,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetCliffAlt_left",
+                "frames": [
+                    {
+                        "x": 768,
+                        "y": 1024,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetCliffAlt_right",
+                "frames": [
+                    {
+                        "x": 768,
+                        "y": 896,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetCliff_left",
+                "frames": [
+                    {
+                        "x": 768,
+                        "y": 768,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetCliff_right",
+                "frames": [
+                    {
+                        "x": 768,
+                        "y": 640,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetCorner_left",
+                "frames": [
+                    {
+                        "x": 768,
+                        "y": 512,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetCorner_right",
+                "frames": [
+                    {
+                        "x": 768,
+                        "y": 384,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetHalf",
+                "frames": [
+                    {
+                        "x": 768,
+                        "y": 256,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetHalf_left",
+                "frames": [
+                    {
+                        "x": 768,
+                        "y": 128,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetHalf_mid",
+                "frames": [
+                    {
+                        "x": 768,
+                        "y": 0,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetHalf_right",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 1920,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetHill_left",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 1792,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetHill_right",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 1664,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetLeft",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 1536,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetMid",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 1408,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "planetRight",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 1280,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sand",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 1152,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandCenter",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 1024,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandCenter_rounded",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 896,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandCliffAlt_left",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 768,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandCliffAlt_right",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 640,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandCliff_left",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 512,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandCliff_right",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 384,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandCorner_leftg",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 256,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandCorner_right",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 128,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandHalf",
+                "frames": [
+                    {
+                        "x": 640,
+                        "y": 0,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandHalf_left",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 1920,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandHalf_mid",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 1792,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandHalf_right",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 1664,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandHill_left",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 1536,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandHill_right",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 1408,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandLeft",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 1280,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandMid",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 1152,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "sandRight",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 1024,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snow",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 896,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowCenter",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 768,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowCenter_rounded",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 640,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowCliffAlt_left",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 512,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowCliffAlt_right",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 384,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowCliff_left",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 256,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowCliff_right",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 128,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowCorner_left",
+                "frames": [
+                    {
+                        "x": 512,
+                        "y": 0,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowCorner_right",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 1920,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowHalf",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 1792,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowHalf_left",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 1664,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowHalf_mid",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 1536,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowHalf_right",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 1408,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowHill_left",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 1280,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowHill_right",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 1152,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowLeft",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 1024,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowMid",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 896,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "snowRight",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 768,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stone",
+                "frames": [
+                    {
+                        "x": 768,
+                        "y": 1408,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneCenter",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 512,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneCenter_rounded",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 384,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneCliffAlt_left",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 256,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneCliffAlt_right",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 128,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneCliff_left",
+                "frames": [
+                    {
+                        "x": 384,
+                        "y": 0,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneCliff_right",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 1920,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneCorner_left",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 1792,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneCorner_right",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 1664,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneHalf",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 1536,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneHalf_left",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 1408,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneHalf_mid",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 1280,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneHalf_right",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 1152,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneHill_left",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 1024,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneHill_right",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 896,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneLeft",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 768,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneMid",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 640,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            },
+            {
+                "name": "stoneRight",
+                "frames": [
+                    {
+                        "x": 256,
+                        "y": 512,
+                        "width": 128,
+                        "height": 128
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -2,6 +2,9 @@
 *.swp
 __pycache__
 
+*.lib
+*.dll
+
 Debug
 Release
 *vcxproj*.user

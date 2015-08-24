@@ -1,0 +1,684 @@
+{
+    "spritesheet": {
+        "name": "kennyPlayers",
+        "imageFile": "kenney/platformer_redux/spritesheet_players.png",
+        "animations": [
+			{
+				"name": "alienBeige_climb",
+				"frames": [
+					{
+						"x": 128,
+						"y": 512,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 128,
+						"y": 256,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienBeige_duck",
+				"frames": [
+					{
+						"x": 128,
+						"y": 0,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienBeige_front",
+				"frames": [
+					{
+						"x": 0,
+						"y": 1792,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienBeige_hit",
+				"frames": [
+					{
+						"x": 0,
+						"y": 1536,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienBeige_jump",
+				"frames": [
+					{
+						"x": 0,
+						"y": 1280,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienBeige_stand",
+				"frames": [
+					{
+						"x": 0,
+						"y": 1024,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienBeige_swim",
+				"frames": [
+					{
+						"x": 0,
+						"y": 768,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 0,
+						"y": 512,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienBeige_walk",
+				"frames": [
+					{
+						"x": 0,
+						"y": 256,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 0,
+						"y": 0,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienBlue_climb",
+				"frames": [
+					{
+						"x": 384,
+						"y": 768,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 768,
+						"y": 1280,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienBlue_duck",
+				"frames": [
+					{
+						"x": 768,
+						"y": 1024,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienBlue_front",
+				"frames": [
+					{
+						"x": 768,
+						"y": 768,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienBlue_hit",
+				"frames": [
+					{
+						"x": 768,
+						"y": 512,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienBlue_jump",
+				"frames": [
+					{
+						"x": 768,
+						"y": 256,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienBlue_stand",
+				"frames": [
+					{
+						"x": 768,
+						"y": 0,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienBlue_swim",
+				"frames": [
+					{
+						"x": 640,
+						"y": 1792,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 640,
+						"y": 1536,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienBlue_walk",
+				"frames": [
+					{
+						"x": 640,
+						"y": 1280,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 640,
+						"y": 1024,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienGreen_climb",
+				"frames": [
+					{
+						"x": 640,
+						"y": 768,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 640,
+						"y": 512,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienGreen_duck",
+				"frames": [
+					{
+						"x": 640,
+						"y": 256,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienGreen_front",
+				"frames": [
+					{
+						"x": 640,
+						"y": 0,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienGreen_hit",
+				"frames": [
+					{
+						"x": 512,
+						"y": 1792,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienGreen_jump",
+				"frames": [
+					{
+						"x": 512,
+						"y": 1536,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienGreen_stand",
+				"frames": [
+					{
+						"x": 512,
+						"y": 1280,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienGreen_swim",
+				"frames": [
+					{
+						"x": 512,
+						"y": 1024,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 512,
+						"y": 768,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienGreen_walk",
+				"frames": [
+					{
+						"x": 512,
+						"y": 512,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 512,
+						"y": 256,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienPink_climb",
+				"frames": [
+					{
+						"x": 512,
+						"y": 0,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 384,
+						"y": 1792,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienPink_duck",
+				"frames": [
+					{
+						"x": 384,
+						"y": 1536,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienPink_front",
+				"frames": [
+					{
+						"x": 384,
+						"y": 1280,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienPink_hit",
+				"frames": [
+					{
+						"x": 384,
+						"y": 1024,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienPink_jump",
+				"frames": [
+					{
+						"x": 768,
+						"y": 1536,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienPink_stand",
+				"frames": [
+					{
+						"x": 384,
+						"y": 512,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienPink_swim",
+				"frames": [
+					{
+						"x": 384,
+						"y": 256,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 384,
+						"y": 0,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienPink_walk",
+				"frames": [
+					{
+						"x": 256,
+						"y": 1792,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 256,
+						"y": 1536,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienYellow_climb",
+				"frames": [
+					{
+						"x": 256,
+						"y": 1280,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 256,
+						"y": 1024,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienYellow_duck",
+				"frames": [
+					{
+						"x": 256,
+						"y": 768,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienYellow_front",
+				"frames": [
+					{
+						"x": 256,
+						"y": 512,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienYellow_hit",
+				"frames": [
+					{
+						"x": 256,
+						"y": 256,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienYellow_jump",
+				"frames": [
+					{
+						"x": 256,
+						"y": 0,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienYellow_stand",
+				"frames": [
+					{
+						"x": 128,
+						"y": 1792,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "alienYellow_swim",
+				"frames": [
+					{
+						"x": 128,
+						"y": 1536,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 128,
+						"y": 1280,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "alienYellow_walk",
+				"frames": [
+					{
+						"x": 128,
+						"y": 1024,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 128,
+						"y": 768,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+
+
+
+			{
+				"name": "climb",
+				"frames": [
+					{
+						"x": 128,
+						"y": 512,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 128,
+						"y": 256,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "duck",
+				"frames": [
+					{
+						"x": 128,
+						"y": 0,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "front",
+				"frames": [
+					{
+						"x": 0,
+						"y": 1792,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "hit",
+				"frames": [
+					{
+						"x": 0,
+						"y": 1536,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "jump",
+				"frames": [
+					{
+						"x": 0,
+						"y": 1280,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "stand",
+				"frames": [
+					{
+						"x": 0,
+						"y": 1024,
+						"width": 128,
+						"height": 256
+					}
+				]
+			},
+			{
+				"name": "swim",
+				"frames": [
+					{
+						"x": 0,
+						"y": 768,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 0,
+						"y": 512,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			},
+			{
+				"name": "walk",
+				"frames": [
+					{
+						"x": 0,
+						"y": 256,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					},
+					{
+						"x": 0,
+						"y": 0,
+						"width": 128,
+						"height": 256,
+						"durationMs": 250
+					}
+				]
+			}
+        ]
+    }
+}
+

@@ -113,13 +113,13 @@
       <SDLCheck>true</SDLCheck>
       <ForcedIncludeFiles>$(ProjectDir)src\StdAfx.h</ForcedIncludeFiles>
       <PrecompiledHeaderFile>$(ProjectDir)src\StdAfx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\_work\library\SDL2-2.0.3-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\_work\library\SDL2-2.0.3-VC\include;E:\_work\library\SDL2_image-2.0.0-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\_work\library\SDL2-2.0.3-VC\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\_work\library\SDL2-2.0.3-VC\lib\x86;E:\_work\library\SDL2_image-2.0.0-VC\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -131,13 +131,13 @@
       <SDLCheck>true</SDLCheck>
       <ForcedIncludeFiles>$(ProjectDir)src\StdAfx.h</ForcedIncludeFiles>
       <PrecompiledHeaderFile>$(ProjectDir)src\StdAfx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\_work\library\SDL2-2.0.3-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\_work\library\SDL2-2.0.3-VC\include;E:\_work\library\SDL2_image-2.0.0-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\_work\library\SDL2-2.0.3-VC\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\_work\library\SDL2-2.0.3-VC\lib\x64;E:\_work\library\SDL2_image-2.0.0-VC\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -151,15 +151,15 @@
       <SDLCheck>true</SDLCheck>
       <ForcedIncludeFiles>$(ProjectDir)src\StdAfx.h</ForcedIncludeFiles>
       <PrecompiledHeaderFile>$(ProjectDir)src\StdAfx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\_work\library\SDL2-2.0.3-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\_work\library\SDL2-2.0.3-VC\include;E:\_work\library\SDL2_image-2.0.0-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\_work\library\SDL2-2.0.3-VC\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\_work\library\SDL2-2.0.3-VC\lib\x86;E:\_work\library\SDL2_image-2.0.0-VC\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -173,15 +173,15 @@
       <SDLCheck>true</SDLCheck>
       <ForcedIncludeFiles>$(ProjectDir)src\StdAfx.h</ForcedIncludeFiles>
       <PrecompiledHeaderFile>$(ProjectDir)src\StdAfx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\_work\library\SDL2-2.0.3-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\_work\library\SDL2-2.0.3-VC\include;E:\_work\library\SDL2_image-2.0.0-VC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\_work\library\SDL2-2.0.3-VC\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\_work\library\SDL2-2.0.3-VC\lib\x64;E:\_work\library\SDL2_image-2.0.0-VC\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
