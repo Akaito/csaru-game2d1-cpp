@@ -23,6 +23,12 @@ static SDL_Rect s_testRects[] = {
 };
 static unsigned g_testRectIndex = 0;
 
+static SDL_Rect s_viewportRects[] = {
+	{                 0,                  0, s_screenWidth / 2, s_screenHeight / 2 },
+	{ s_screenWidth / 2,                  0, s_screenWidth / 2, s_screenHeight / 2 },
+	{                 0, s_screenHeight / 2, s_screenWidth,     s_screenHeight / 2 },
+};
+
 
 bool init () {
 
@@ -152,41 +158,46 @@ int main (int argc, char ** argv) {
             }
         }
 
-        // Draw Texture.
+		// Clear the renderer to prepare for drawing.
 		SDL_SetRenderDrawColor(g_renderer, 0x3F, 0x00, 0x3F, 0xFF);
 		SDL_RenderClear(g_renderer);
-		SDL_RenderCopy(
-			g_renderer,
-			g_testTexture,
-			&s_testRects[g_testRectIndex] /* srcRect */,
-			nullptr /* destRect */
-		);
-		SDL_RenderCopy(
-			g_renderer,
-			g_testTexture,
-			&s_testRects[g_testRectIndex] /* srcRect */,
-			&s_testRects[0] /* destRect */
-		);
 
-		// Draw primitive.
-		SDL_Rect testPrimitiveRect = { s_screenWidth / 8 * 6, s_screenHeight / 8 * 6, s_screenWidth / 8, s_screenHeight / 8 };
-		SDL_SetRenderDrawColor(g_renderer, 0x00, 0x40, 0xFF, 0xFF);
-		SDL_RenderFillRect(g_renderer, &testPrimitiveRect);
-		// Draw outline primitive.
-		testPrimitiveRect.x -= 50;
-		testPrimitiveRect.y -= 50;
-		testPrimitiveRect.w += 50;
-		testPrimitiveRect.h += 50;
-		SDL_SetRenderDrawColor(g_renderer, 0x00, 0xFF, 0xFF, 0x40);
-		SDL_RenderDrawRect(g_renderer, &testPrimitiveRect);
-		// Draw line.
-		SDL_SetRenderDrawColor(g_renderer, 0x00, 0xFF, 0x40, 0xFF);
-		SDL_RenderDrawLine(g_renderer, s_screenWidth / 4, s_screenHeight / 2, s_screenWidth / 4 * 3, s_screenHeight / 2);
-		// Draw points.
-		SDL_SetRenderDrawColor(g_renderer, 0xFF, 0x00, 0xFF, 0xFF);
-		for (unsigned i = s_screenHeight / 4;  i < s_screenHeight / 4 * 3;  i += 10) {
-			SDL_RenderDrawPoint(g_renderer, s_screenWidth / 2, i);
-		}
+		for (unsigned viewportIndex = 0;  viewportIndex < arrsize(s_viewportRects);  ++viewportIndex) {
+			SDL_RenderSetViewport(g_renderer, &s_viewportRects[viewportIndex]);
+			// Draw Texture.
+			SDL_RenderCopy(
+				g_renderer,
+				g_testTexture,
+				&s_testRects[g_testRectIndex] /* srcRect */,
+				nullptr /* destRect */
+			);
+			SDL_RenderCopy(
+				g_renderer,
+				g_testTexture,
+				&s_testRects[g_testRectIndex] /* srcRect */,
+				&s_testRects[0] /* destRect */
+			);
+
+			// Draw primitive.
+			SDL_Rect testPrimitiveRect = { s_screenWidth / 8 * 6, s_screenHeight / 8 * 6, s_screenWidth / 8, s_screenHeight / 8 };
+			SDL_SetRenderDrawColor(g_renderer, 0x00, 0x40, 0xFF, 0xFF);
+			SDL_RenderFillRect(g_renderer, &testPrimitiveRect);
+			// Draw outline primitive.
+			testPrimitiveRect.x -= 50;
+			testPrimitiveRect.y -= 50;
+			testPrimitiveRect.w += 50;
+			testPrimitiveRect.h += 50;
+			SDL_SetRenderDrawColor(g_renderer, 0x00, 0xFF, 0xFF, 0x40);
+			SDL_RenderDrawRect(g_renderer, &testPrimitiveRect);
+			// Draw line.
+			SDL_SetRenderDrawColor(g_renderer, 0x00, 0xFF, 0x40, 0xFF);
+			SDL_RenderDrawLine(g_renderer, s_screenWidth / 4, s_screenHeight / 2, s_screenWidth / 4 * 3, s_screenHeight / 2);
+			// Draw points.
+			SDL_SetRenderDrawColor(g_renderer, 0xFF, 0x00, 0xFF, 0xFF);
+			for (unsigned i = s_screenHeight / 4;  i < s_screenHeight / 4 * 3;  i += 10) {
+				SDL_RenderDrawPoint(g_renderer, s_screenWidth / 2, i);
+			}
+		} // end for each viewport
 
 		SDL_RenderPresent(g_renderer);
     }
