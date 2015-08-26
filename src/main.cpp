@@ -10,9 +10,9 @@ static const int  s_screenWidth       = 640;
 static const int  s_screenHeight      = 480;
 static const char s_testImageSource[] = "kenney/platformer_redux/spritesheet_ground.png";
 
-static SDL_Window *  g_window        = nullptr;
-static SDL_Surface * g_windowSurface = nullptr;
-static SDL_Surface * g_testImage     = nullptr;
+static SDL_Window *   g_window        = nullptr;
+static SDL_Renderer * g_renderer      = nullptr;
+static SDL_Texture *  g_testTexture   = nullptr;
 
 static SDL_Rect s_testRects[] = {
     {   0,   0, 128, 128 },
@@ -31,6 +31,7 @@ bool init () {
         return false;
     }
 
+	// Create main window.
     g_window = SDL_CreateWindow(
         "game2d1",
         SDL_WINDOWPOS_CENTERED,
@@ -44,33 +45,56 @@ bool init () {
         return false;
     }
 
-    g_windowSurface = SDL_GetWindowSurface(g_window);
+	// Create renderer for main window.
+	g_renderer = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_ACCELERATED);
+	if (!g_renderer) {
+		printf("SDL failed to create renderer.  %s\n", SDL_GetError());
+		return false;
+	}
+
+	// Set color used when clearing.
+	SDL_SetRenderDrawColor(g_renderer, 0x3F, 0x00, 0x3F, 0xFF);
+
+	// Initialize SDL_image extension.
+	int imgFlags = IMG_INIT_PNG;
+	if (!(IMG_Init(imgFlags) & imgFlags)) {
+		printf("SDL_image failed to initialize.  %s\n", IMG_GetError());
+		return false;
+	}
 
     return true;
 
 }
 
 
+SDL_Texture * loadTexture (const char * path) {
+
+	SDL_Texture * result      = nullptr;
+	SDL_Surface * tempSurface = IMG_Load(path);
+	if (!tempSurface) {
+		printf("SDL_image failed to load {%s}.  %s\n", path, IMG_GetError());
+		return nullptr;
+	}
+
+	result = SDL_CreateTextureFromSurface(g_renderer, tempSurface);
+	if (!result) {
+		printf("SDL failed to create a texture from surface for {%s}.  %s\n", path, SDL_GetError());
+		SDL_FreeSurface(tempSurface);
+		return nullptr;
+	}
+
+	return result;
+
+}
+
+
 bool loadMedia () {
 
-    SDL_Surface * tempSurface = nullptr;
-
-    tempSurface = IMG_Load(s_testImageSource);
-    if (!tempSurface) {
-        printf("Failed to load image at {%s}.  %s\n", s_testImageSource, SDL_GetError());
-        return false;
-    }
-    //g_testImage = tempSurface;
-    //return true;
-
-    g_testImage = SDL_ConvertSurface(tempSurface, g_windowSurface->format, 0 /* flags */);
-    if (!g_testImage) {
-        printf("Failed to convert and optimize loaded image format from {%s}.  %s\n", s_testImageSource, SDL_GetError());
-        return false;
-    }
-
-    SDL_FreeSurface(tempSurface);
-    tempSurface = nullptr;
+	g_testTexture = loadTexture(s_testImageSource);
+	if (!g_testTexture) {
+		printf("Failed to load texture.\n");
+		return false;
+	}
 
     return true;
 
@@ -79,13 +103,17 @@ bool loadMedia () {
 
 void close () {
 
-    SDL_FreeSurface(g_testImage);
-    g_testImage = nullptr;
+	// Free loaded data.
+    SDL_DestroyTexture(g_testTexture);
+    g_testTexture = nullptr;
 
+	// Destroy window.
+	SDL_DestroyRenderer(g_renderer);
     SDL_DestroyWindow(g_window);
-    g_windowSurface = nullptr;
-    g_window        = nullptr;
+    g_renderer = nullptr;
+    g_window   = nullptr;
 
+	IMG_Quit();
     SDL_Quit();
 
 }
@@ -125,11 +153,20 @@ int main (int argc, char ** argv) {
         }
 
         // draw
-        SDL_FillRect(g_windowSurface, nullptr /* rect */, SDL_MapRGB(g_windowSurface->format, 0x00, 0x00, 0x3F));
-        SDL_Rect windRect = {0, 0, s_screenWidth, s_screenHeight};
-        SDL_BlitScaled(g_testImage, &s_testRects[g_testRectIndex], g_windowSurface, &windRect);
-        SDL_BlitSurface(g_testImage, &s_testRects[g_testRectIndex], g_windowSurface, nullptr /* destRect */);
-        SDL_UpdateWindowSurface(g_window);
+		SDL_RenderClear(g_renderer);
+		SDL_RenderCopy(
+			g_renderer,
+			g_testTexture,
+			&s_testRects[g_testRectIndex] /* srcRect */,
+			nullptr /* destRect */
+		);
+		SDL_RenderCopy(
+			g_renderer,
+			g_testTexture,
+			&s_testRects[g_testRectIndex] /* srcRect */,
+			&s_testRects[0] /* destRect */
+		);
+		SDL_RenderPresent(g_renderer);
     }
 
     // wait
