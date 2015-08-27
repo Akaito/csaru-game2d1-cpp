@@ -31,7 +31,7 @@ public:
 	void SetAlpha (uint8_t a);
 	void SetBlendMode (SDL_BlendMode blendMode);
 
-	void Render (unsigned x, unsigned y, const SDL_Rect * srcRect = nullptr) const;
+	void Render (unsigned x, unsigned y, const SDL_Rect * srcRect = nullptr, double rotDegrees = 0.0, const SDL_Point * rotCenter = nullptr, SDL_RendererFlip flip = SDL_FLIP_NONE) const;
 
 	unsigned GetWidth () const   { return m_width;  }
 	unsigned GetHeight () const  { return m_height; }
@@ -243,6 +243,11 @@ int main (int argc, char ** argv) {
 		const unsigned animFrame = (g_frameCounter / 16) % arrsize(s_animRects);
 		g_fgTexture.Render(100 - srcRect.w, 40, &s_animRects[animFrame]);
 
+		// Rotation and flipping
+		g_fgTexture.Render(100 - srcRect.w, 40 + srcRect.h, &srcRect, 45.0 /* rotDegrees */);
+		g_fgTexture.Render(100            , 40 + srcRect.h, &srcRect, 45.0, nullptr /* rotCenter */, SDL_FLIP_HORIZONTAL);
+		g_fgTexture.Render(100 + srcRect.w, 40 + srcRect.h, &srcRect, 45.0 + 1.0 * g_frameCounter, nullptr /* rotCenter */, SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL));
+
 		// Test color modulation.
 		g_fgTexture.SetColor(0xFF, 0x00, 0x00);
 		g_fgTexture.Render(100 + srcRect.w, 40, &srcRect);
@@ -329,7 +334,14 @@ void TextureWrapper::SetBlendMode (SDL_BlendMode blendMode) {
 	SDL_SetTextureBlendMode(m_texture, blendMode);
 }
 
-void TextureWrapper::Render (unsigned x, unsigned y, const SDL_Rect * srcRect) const {
+void TextureWrapper::Render (
+	unsigned          x,
+	unsigned          y,
+	const SDL_Rect *  srcRect,
+	double            rotDegrees,
+	const SDL_Point * rotCenter,
+	SDL_RendererFlip  flip
+) const {
 
 	SDL_Rect destRect = { x, y, m_width, m_height };
 	if (srcRect) {
@@ -337,6 +349,6 @@ void TextureWrapper::Render (unsigned x, unsigned y, const SDL_Rect * srcRect) c
 		destRect.h = srcRect->h;
 	}
 
-	SDL_RenderCopy(g_renderer, m_texture, srcRect, &destRect);
+	SDL_RenderCopyEx(g_renderer, m_texture, srcRect, &destRect, rotDegrees, rotCenter, flip);
 
 }
