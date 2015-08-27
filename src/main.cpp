@@ -28,6 +28,8 @@ public:
 	void Free ();
 
 	void SetColor (uint8_t r, uint8_t g, uint8_t b);
+	void SetAlpha (uint8_t a);
+	void SetBlendMode (SDL_BlendMode blendMode);
 
 	void Render (unsigned x, unsigned y, const SDL_Rect * srcRect = nullptr) const;
 
@@ -40,8 +42,9 @@ static const int  s_screenWidth       = 640;
 static const int  s_screenHeight      = 480;
 static const char s_testImageSource[] = "kenney/platformer_redux/spritesheet_ground.png";
 
-static SDL_Window *   g_window      = nullptr;
-static SDL_Renderer * g_renderer    = nullptr;
+static unsigned       g_frameCounter = 0;
+static SDL_Window *   g_window       = nullptr;
+static SDL_Renderer * g_renderer     = nullptr;
 static TextureWrapper g_bgTexture;
 static TextureWrapper g_fgTexture;
 
@@ -53,6 +56,11 @@ static SDL_Rect s_testRects[] = {
     { 128, 128, 128, 128 },
 };
 static unsigned g_testRectIndex = 0;
+
+static SDL_Rect s_animRects[] = {
+    { 128,1024, 128, 256 },
+    { 128, 768, 128, 256 },
+};
 
 static SDL_Rect s_viewportRects[] = {
 	{                 0,                  0, s_screenWidth / 2, s_screenHeight / 2 },
@@ -83,7 +91,11 @@ bool init () {
     }
 
 	// Create renderer for main window.
-	g_renderer = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_ACCELERATED);
+	g_renderer = SDL_CreateRenderer(
+		g_window,
+		-1 /* rendering driver index; -1 use first available renderer */,
+		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+	);
 	if (!g_renderer) {
 		printf("SDL failed to create renderer.  %s\n", SDL_GetError());
 		return false;
@@ -115,6 +127,8 @@ bool loadMedia () {
 		printf("Failed to load bg image!\n");
 		return false;
 	}
+
+	g_fgTexture.SetBlendMode(SDL_BLENDMODE_BLEND);
 
     return true;
 
@@ -167,6 +181,9 @@ int main (int argc, char ** argv) {
                     case SDLK_LEFT:  g_testRectIndex = 3; break;
                     case SDLK_RIGHT: g_testRectIndex = 4; break;
 
+					case SDLK_w: g_fgTexture.SetAlpha(0xFF); break;
+					case SDLK_s: g_fgTexture.SetAlpha(0x7F); break;
+
                     default:         g_testRectIndex = 0; break;
                 }
             }
@@ -218,15 +235,21 @@ int main (int argc, char ** argv) {
 		SDL_RenderSetViewport(g_renderer, nullptr);
 		g_bgTexture.Render(0, 0);
 		// Test src clip rect in TextureWrapper class.
-		SDL_Rect srcRect = { 384, 512, 128, 256 };
-		g_fgTexture.SetColor(0xFF, 0xFF, 0x00);
+		SDL_Rect srcRect = { 512, 1280, 128, 256 };
+		g_fgTexture.SetColor(0xFF, 0xFF, 0xFF);
 		g_fgTexture.Render(100, 40, &srcRect);
+
+		// Test animation.
+		const unsigned animFrame = (g_frameCounter / 16) % arrsize(s_animRects);
+		g_fgTexture.Render(100 - srcRect.w, 40, &s_animRects[animFrame]);
 
 		// Test color modulation.
 		g_fgTexture.SetColor(0xFF, 0x00, 0x00);
 		g_fgTexture.Render(100 + srcRect.w, 40, &srcRect);
 
 		SDL_RenderPresent(g_renderer);
+
+		++g_frameCounter;
     }
 
     // wait
@@ -296,6 +319,14 @@ void TextureWrapper::Free () {
 
 void TextureWrapper::SetColor (uint8_t r, uint8_t g, uint8_t b) {
 	SDL_SetTextureColorMod(m_texture, r, g, b);
+}
+
+void TextureWrapper::SetAlpha (uint8_t a) {
+	SDL_SetTextureAlphaMod(m_texture, a);
+}
+
+void TextureWrapper::SetBlendMode (SDL_BlendMode blendMode) {
+	SDL_SetTextureBlendMode(m_texture, blendMode);
 }
 
 void TextureWrapper::Render (unsigned x, unsigned y, const SDL_Rect * srcRect) const {
