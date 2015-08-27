@@ -27,6 +27,8 @@ public:
 
 	void Free ();
 
+	void SetColor (uint8_t r, uint8_t g, uint8_t b);
+
 	void Render (unsigned x, unsigned y, const SDL_Rect * srcRect = nullptr) const;
 
 	unsigned GetWidth () const   { return m_width;  }
@@ -217,7 +219,12 @@ int main (int argc, char ** argv) {
 		g_bgTexture.Render(0, 0);
 		// Test src clip rect in TextureWrapper class.
 		SDL_Rect srcRect = { 384, 512, 128, 256 };
+		g_fgTexture.SetColor(0xFF, 0xFF, 0x00);
 		g_fgTexture.Render(100, 40, &srcRect);
+
+		// Test color modulation.
+		g_fgTexture.SetColor(0xFF, 0x00, 0x00);
+		g_fgTexture.Render(100 + srcRect.w, 40, &srcRect);
 
 		SDL_RenderPresent(g_renderer);
     }
@@ -285,6 +292,10 @@ void TextureWrapper::Free () {
 	m_texture = nullptr;
 	m_width   = 0;
 	m_height  = 0;
+}
+
+void TextureWrapper::SetColor (uint8_t r, uint8_t g, uint8_t b) {
+	SDL_SetTextureColorMod(m_texture, r, g, b);
 }
 
 void TextureWrapper::Render (unsigned x, unsigned y, const SDL_Rect * srcRect) const {
