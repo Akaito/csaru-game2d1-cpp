@@ -6,13 +6,36 @@
 
 #include <csaru-core-cpp.h>
 
+
+class TextureWrapper {
+private:
+	SDL_Texture * m_texture;
+	unsigned      m_width;
+	unsigned      m_height;
+
+public:
+	TextureWrapper ();
+	~TextureWrapper ();
+
+	bool LoadFromFile (const char * path, bool colorKeying, uint8_t r, uint8_t g, uint8_t b);
+
+	void Free ();
+
+	void Render (unsigned x, unsigned y) const;
+
+	unsigned GetWidth () const   { return m_width;  }
+	unsigned GetHeight () const  { return m_height; }
+};
+
+
 static const int  s_screenWidth       = 640;
 static const int  s_screenHeight      = 480;
 static const char s_testImageSource[] = "kenney/platformer_redux/spritesheet_ground.png";
 
-static SDL_Window *   g_window        = nullptr;
-static SDL_Renderer * g_renderer      = nullptr;
-static SDL_Texture *  g_testTexture   = nullptr;
+static SDL_Window *   g_window      = nullptr;
+static SDL_Renderer * g_renderer    = nullptr;
+static TextureWrapper g_bgTexture;
+static TextureWrapper g_fgTexture;
 
 static SDL_Rect s_testRects[] = {
     {   0,   0, 128, 128 },
@@ -73,32 +96,15 @@ bool init () {
 }
 
 
-SDL_Texture * loadTexture (const char * path) {
-
-	SDL_Texture * result      = nullptr;
-	SDL_Surface * tempSurface = IMG_Load(path);
-	if (!tempSurface) {
-		printf("SDL_image failed to load {%s}.  %s\n", path, IMG_GetError());
-		return nullptr;
-	}
-
-	result = SDL_CreateTextureFromSurface(g_renderer, tempSurface);
-	if (!result) {
-		printf("SDL failed to create a texture from surface for {%s}.  %s\n", path, SDL_GetError());
-		SDL_FreeSurface(tempSurface);
-		return nullptr;
-	}
-
-	return result;
-
-}
-
-
 bool loadMedia () {
 
-	g_testTexture = loadTexture(s_testImageSource);
-	if (!g_testTexture) {
-		printf("Failed to load texture.\n");
+	if (!g_bgTexture.LoadFromFile("testImage.png", false, 0x00, 0x00, 0x00)) {
+		printf("Failed to load bg image!\n");
+		return false;
+	}
+
+	if (!g_fgTexture.LoadFromFile("testImage.png", true, 0xFF, 0x00, 0xFF)) {
+		printf("Failed to load bg image!\n");
 		return false;
 	}
 
@@ -110,8 +116,8 @@ bool loadMedia () {
 void close () {
 
 	// Free loaded data.
-    SDL_DestroyTexture(g_testTexture);
-    g_testTexture = nullptr;
+	g_fgTexture.Free();
+	g_bgTexture.Free();
 
 	// Destroy window.
 	SDL_DestroyRenderer(g_renderer);
@@ -162,6 +168,7 @@ int main (int argc, char ** argv) {
 		SDL_SetRenderDrawColor(g_renderer, 0x3F, 0x00, 0x3F, 0xFF);
 		SDL_RenderClear(g_renderer);
 
+#if 0
 		for (unsigned viewportIndex = 0;  viewportIndex < arrsize(s_viewportRects);  ++viewportIndex) {
 			SDL_RenderSetViewport(g_renderer, &s_viewportRects[viewportIndex]);
 			// Draw Texture.
@@ -198,6 +205,12 @@ int main (int argc, char ** argv) {
 				SDL_RenderDrawPoint(g_renderer, s_screenWidth / 2, i);
 			}
 		} // end for each viewport
+#endif
+
+		// Test color keying.
+		SDL_RenderSetViewport(g_renderer, nullptr);
+		g_bgTexture.Render(0, 0);
+		g_fgTexture.Render(100, 40);
 
 		SDL_RenderPresent(g_renderer);
     }
@@ -209,4 +222,65 @@ int main (int argc, char ** argv) {
     close();
     return 0;
 
+}
+
+
+TextureWrapper::TextureWrapper () :
+	m_texture(nullptr),
+	m_width(0),
+	m_height(0)
+{}
+
+TextureWrapper::~TextureWrapper () {
+	Free();
+}
+
+bool TextureWrapper::LoadFromFile (const char * path, bool colorKeying, uint8_t r, uint8_t g, uint8_t b) {
+
+	Free();
+
+	SDL_Surface * tempSurface = IMG_Load(path);
+	if (!tempSurface) {
+		printf("SDL_image failed to load {%s}.  %s\n", path, IMG_GetError());
+		return false;
+	}
+
+	// Have to set the color key (transparent color) on the surface before creating a texture from it.
+	if (colorKeying) {
+		SDL_SetColorKey(
+			tempSurface,
+			SDL_TRUE /* enable/disable color key */,
+			SDL_MapRGB(tempSurface->format, r, g, b)
+		);
+	}
+
+	m_texture = SDL_CreateTextureFromSurface(g_renderer, tempSurface);
+	if (!m_texture) {
+		printf("SDL failed to create a texture from surface for {%s}.  %s\n", path, SDL_GetError());
+		SDL_FreeSurface(tempSurface);
+		return false;
+	}
+
+	m_width  = tempSurface->w;
+	m_height = tempSurface->h;
+
+	SDL_FreeSurface(tempSurface);
+
+	return m_texture != nullptr;
+
+}
+
+void TextureWrapper::Free () {
+	if (!m_texture)
+		return;
+
+	SDL_DestroyTexture(m_texture);
+	m_texture = nullptr;
+	m_width   = 0;
+	m_height  = 0;
+}
+
+void TextureWrapper::Render (unsigned x, unsigned y) const {
+	SDL_Rect destRect = { x, y, m_width, m_height };
+	SDL_RenderCopy(g_renderer, m_texture, nullptr /* srcRect */, &destRect);
 }
