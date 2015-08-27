@@ -17,11 +17,17 @@ public:
 	TextureWrapper ();
 	~TextureWrapper ();
 
-	bool LoadFromFile (const char * path, bool colorKeying, uint8_t r, uint8_t g, uint8_t b);
+	bool LoadFromFile (
+		const char * path,
+		bool         colorKeying = false,
+		uint8_t      r           = 0xFF,
+		uint8_t      g           = 0x00,
+		uint8_t      b           = 0xFF
+	);
 
 	void Free ();
 
-	void Render (unsigned x, unsigned y) const;
+	void Render (unsigned x, unsigned y, const SDL_Rect * srcRect = nullptr) const;
 
 	unsigned GetWidth () const   { return m_width;  }
 	unsigned GetHeight () const  { return m_height; }
@@ -103,7 +109,7 @@ bool loadMedia () {
 		return false;
 	}
 
-	if (!g_fgTexture.LoadFromFile("testImage.png", true, 0xFF, 0x00, 0xFF)) {
+	if (!g_fgTexture.LoadFromFile("kenney/platformer_redux/spritesheet_players.png")) {
 		printf("Failed to load bg image!\n");
 		return false;
 	}
@@ -207,10 +213,11 @@ int main (int argc, char ** argv) {
 		} // end for each viewport
 #endif
 
-		// Test color keying.
 		SDL_RenderSetViewport(g_renderer, nullptr);
 		g_bgTexture.Render(0, 0);
-		g_fgTexture.Render(100, 40);
+		// Test src clip rect in TextureWrapper class.
+		SDL_Rect srcRect = { 384, 512, 128, 256 };
+		g_fgTexture.Render(100, 40, &srcRect);
 
 		SDL_RenderPresent(g_renderer);
     }
@@ -280,7 +287,14 @@ void TextureWrapper::Free () {
 	m_height  = 0;
 }
 
-void TextureWrapper::Render (unsigned x, unsigned y) const {
+void TextureWrapper::Render (unsigned x, unsigned y, const SDL_Rect * srcRect) const {
+
 	SDL_Rect destRect = { x, y, m_width, m_height };
-	SDL_RenderCopy(g_renderer, m_texture, nullptr /* srcRect */, &destRect);
+	if (srcRect) {
+		destRect.w = srcRect->w;
+		destRect.h = srcRect->h;
+	}
+
+	SDL_RenderCopy(g_renderer, m_texture, srcRect, &destRect);
+
 }
