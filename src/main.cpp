@@ -1,10 +1,16 @@
 // NOTE: Much of this early code is taken from Lazy Foo's SDL tutorials at http://lazyfoo.net/tutorials/SDL/
 
-#include <SDL.h>
-#include <SDL_image.h>
+#ifdef __WIN32__
+#	include <SDL.h>
+#	include <SDL_image.h>
+#else
+#	include <SDL2/SDL.h>
+#	include <SDL2/SDL_image.h>
+#endif
+
 #include <stdio.h>
 
-#include <csaru-core-cpp.h>
+// #include <csaru-core-cpp.h>
 
 
 class TextureWrapper {
@@ -155,8 +161,9 @@ void close () {
 
 int main (int argc, char ** argv) {
 
-    ref(argc);
-    ref(argv);
+    //ref(argc);
+    //ref(argv);
+	argc;argv;
 
     // initialize and load
     if (!init())
@@ -240,7 +247,8 @@ int main (int argc, char ** argv) {
 		g_fgTexture.Render(100, 40, &srcRect);
 
 		// Test animation.
-		const unsigned animFrame = (g_frameCounter / 16) % arrsize(s_animRects);
+		//const unsigned animFrame = (g_frameCounter / 16) % arrsize(s_animRects);
+		const unsigned animFrame = (g_frameCounter / 16) % (sizeof(s_animRects)/sizeof(s_animRects[0]));
 		g_fgTexture.Render(100 - srcRect.w, 40, &s_animRects[animFrame]);
 
 		// Rotation and flipping

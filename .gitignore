@@ -8,3 +8,4 @@ __pycache__
 Debug
 Release
 *vcxproj*.user
+*.out
