@@ -6,11 +6,12 @@
 #else
 #	include <SDL2/SDL.h>
 #	include <SDL2/SDL_image.h>
+#	include <SDL2/SDL_ttf.h>
 #endif
 
 #include <stdio.h>
 
-// #include <csaru-core-cpp.h>
+#include <csaru-core-cpp/csaru-core-cpp.h>
 
 
 class TextureWrapper {
@@ -30,6 +31,8 @@ public:
 		uint8_t      g           = 0x00,
 		uint8_t      b           = 0xFF
 	);
+
+	bool LoadFromRenderedText (const char * textureText, SDL_Color textColor);
 
 	void Free ();
 
@@ -51,6 +54,8 @@ static const char s_testImageSource[] = "kenney/platformer_redux/spritesheet_gro
 static unsigned       g_frameCounter = 0;
 static SDL_Window *   g_window       = nullptr;
 static SDL_Renderer * g_renderer     = nullptr;
+static TTF_Font *     g_font         = nullptr;
+static TextureWrapper g_textTexture;
 static TextureWrapper g_bgTexture;
 static TextureWrapper g_fgTexture;
 
@@ -117,6 +122,12 @@ bool init () {
 		return false;
 	}
 
+	// Initialize SDL_ttf
+	if (TTF_Init() == -1) {
+		printf("SDL_ttf could not initialize!  %s\n", TTF_GetError());
+		return false;
+	}
+
     return true;
 
 }
@@ -133,8 +144,23 @@ bool loadMedia () {
 		printf("Failed to load bg image!\n");
 		return false;
 	}
-
 	g_fgTexture.SetBlendMode(SDL_BLENDMODE_BLEND);
+
+	// Open the font
+	{
+		g_font = TTF_OpenFont("ubuntu-font-family/UbuntuMono-B.ttf", 28);
+		if (!g_font) {
+			printf("Failed to load ttf font!  SDL_ttf Error: %s\n", TTF_GetError());
+			return false;
+		}
+
+		// Render text
+		SDL_Color textColor = { 255, 255, 255 };
+		if (!g_textTexture.LoadFromRenderedText("The quick brown fox jumps over the lazy dog", textColor)) {
+			printf("Failed to render text texture!\n");
+			return false;
+		}
+	}
 
     return true;
 
@@ -144,8 +170,13 @@ bool loadMedia () {
 void close () {
 
 	// Free loaded data.
+	g_textTexture.Free();
 	g_fgTexture.Free();
 	g_bgTexture.Free();
+
+	// Free font data.
+	TTF_CloseFont(g_font);
+	g_font = nullptr;
 
 	// Destroy window.
 	SDL_DestroyRenderer(g_renderer);
@@ -153,6 +184,7 @@ void close () {
     g_renderer = nullptr;
     g_window   = nullptr;
 
+	TTF_Quit();
 	IMG_Quit();
     SDL_Quit();
 
@@ -161,9 +193,8 @@ void close () {
 
 int main (int argc, char ** argv) {
 
-    //ref(argc);
-    //ref(argv);
-	argc;argv;
+    ref(argc);
+    ref(argv);
 
     // initialize and load
     if (!init())
@@ -247,8 +278,7 @@ int main (int argc, char ** argv) {
 		g_fgTexture.Render(100, 40, &srcRect);
 
 		// Test animation.
-		//const unsigned animFrame = (g_frameCounter / 16) % arrsize(s_animRects);
-		const unsigned animFrame = (g_frameCounter / 16) % (sizeof(s_animRects)/sizeof(s_animRects[0]));
+		const unsigned animFrame = (g_frameCounter / 16) % arrsize(s_animRects);
 		g_fgTexture.Render(100 - srcRect.w, 40, &s_animRects[animFrame]);
 
 		// Rotation and flipping
@@ -259,6 +289,12 @@ int main (int argc, char ** argv) {
 		// Test color modulation.
 		g_fgTexture.SetColor(0xFF, 0x00, 0x00);
 		g_fgTexture.Render(100 + srcRect.w, 40, &srcRect);
+
+		// Test text rendering.
+		g_textTexture.Render(
+			(s_screenWidth  - g_textTexture.GetWidth())  / 2,
+			(s_screenHeight - g_textTexture.GetHeight()) / 2
+		);
 
 		SDL_RenderPresent(g_renderer);
 
@@ -318,6 +354,33 @@ bool TextureWrapper::LoadFromFile (const char * path, bool colorKeying, uint8_t 
 
 	return m_texture != nullptr;
 
+}
+
+bool TextureWrapper::LoadFromRenderedText (const char * textureText, SDL_Color textColor) {
+	// Get rid of pre-existing texture (if any)
+	Free();
+
+	// Render text surface
+	SDL_Surface * textSurface = TTF_RenderText_Solid(g_font, textureText, textColor);
+	if (!textSurface) {
+		printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+		return false;
+	}
+
+	// Create texture from surface pixels
+	m_texture = SDL_CreateTextureFromSurface(g_renderer, textSurface);
+	if (!m_texture) {
+		printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
+		return false;
+	}
+
+	// Get image dimensions
+	m_width  = textSurface->w;
+	m_height = textSurface->h;
+
+	// Get rid of old surface
+	SDL_FreeSurface(textSurface);
+	return true;
 }
 
 void TextureWrapper::Free () {
