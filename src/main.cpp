@@ -351,7 +351,7 @@ void TextureWrapper::Render (
 	SDL_RendererFlip  flip
 ) const {
 
-	SDL_Rect destRect = { x, y, m_width, m_height };
+	SDL_Rect destRect = { int(x), int(y), int(m_width), int(m_height) };
 	if (srcRect) {
 		destRect.w = srcRect->w;
 		destRect.h = srcRect->h;
