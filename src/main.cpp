@@ -38,10 +38,7 @@ static SDL_Rect s_testRects[] = {
 };
 static unsigned g_testRectIndex = 0;
 
-static SDL_Rect s_animRects[] = {
-    { 128,1024, 128, 256 },
-    { 128, 768, 128, 256 },
-};
+static CSaru2d::TextureAnimation g_yellowAlienWalkAnim;
 
 static SDL_Rect s_viewportRects[] = {
 	{                 0,                  0, s_screenWidth / 2, s_screenHeight / 2 },
@@ -111,7 +108,7 @@ bool loadMedia () {
 	}
 
 	if (!g_fgTexture.LoadFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png")) {
-		printf("Failed to load bg image!\n");
+		printf("Failed to load fg image!\n");
 		return false;
 	}
 	g_fgTexture.SetBlendMode(SDL_BLENDMODE_BLEND);
@@ -131,6 +128,10 @@ bool loadMedia () {
 			return false;
 		}
 	}
+
+	// setup animation(s)
+	g_yellowAlienWalkAnim.SetSrcRect(0, SDL_Rect{ 128, 1024, 128, 256 });
+	g_yellowAlienWalkAnim.SetSrcRect(1, SDL_Rect{ 128,  768, 128, 256 });
 
     return true;
 
@@ -248,8 +249,8 @@ int main (int argc, char ** argv) {
 		g_fgTexture.Render(g_renderer, 100, 40, &srcRect);
 
 		// Test animation.
-		const unsigned animFrame = (g_frameCounter / 16) % arrsize(s_animRects);
-		g_fgTexture.Render(g_renderer, 100 - srcRect.w, 40, &s_animRects[animFrame]);
+		const unsigned animFrame = (g_frameCounter / 16) % g_yellowAlienWalkAnim.GetFrameCount();
+		g_fgTexture.Render(g_renderer, 100 - srcRect.w, 40, &g_yellowAlienWalkAnim.GetSrcRect(animFrame));
 
 		// Rotation and flipping
 		g_fgTexture.Render(g_renderer, 100 - srcRect.w, 40 + srcRect.h, &srcRect, 45.0 /* rotDegrees */);
