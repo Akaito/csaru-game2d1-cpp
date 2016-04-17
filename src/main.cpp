@@ -1,9 +1,10 @@
 // NOTE: Much of this early code is taken from Lazy Foo's SDL tutorials at http://lazyfoo.net/tutorials/SDL/
 
-#ifdef __WIN32__
+#ifdef WIN32
 #	include <SDL.h>
 #	include <SDL_image.h>
 #	include <SDL_ttf.h>
+#	undef main
 #else
 #	include <SDL2/SDL.h>
 #	include <SDL2/SDL_image.h>
@@ -13,8 +14,10 @@
 #include <stdio.h>
 
 #include <csaru-core-cpp/csaru-core-cpp.h>
+#include <csaru-game2dlib-cpp/csaru-game2dlib-cpp.h>
 
 
+/*
 class TextureWrapper {
 private:
 	SDL_Texture * m_texture;
@@ -46,6 +49,7 @@ public:
 	unsigned GetWidth () const   { return m_width;  }
 	unsigned GetHeight () const  { return m_height; }
 };
+*/
 
 
 static const int  s_screenWidth       = 640;
@@ -56,9 +60,9 @@ static unsigned       g_frameCounter = 0;
 static SDL_Window *   g_window       = nullptr;
 static SDL_Renderer * g_renderer     = nullptr;
 static TTF_Font *     g_font         = nullptr;
-static TextureWrapper g_textTexture;
-static TextureWrapper g_bgTexture;
-static TextureWrapper g_fgTexture;
+//static TextureWrapper g_textTexture;
+static CSaru2d::Texture g_bgTexture;
+static CSaru2d::Texture g_fgTexture;
 
 static SDL_Rect s_testRects[] = {
     {   0,   0, 128, 128 },
@@ -136,12 +140,12 @@ bool init () {
 
 bool loadMedia () {
 
-	if (!g_bgTexture.LoadFromFile("testImage.png", false, 0x00, 0x00, 0x00)) {
+	if (!g_bgTexture.LoadFromFile(g_renderer, "testImage.png", false, 0x00, 0x00, 0x00)) {
 		printf("Failed to load bg image!\n");
 		return false;
 	}
 
-	if (!g_fgTexture.LoadFromFile("kenney/platformer_redux/spritesheet_players.png")) {
+	if (!g_fgTexture.LoadFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png")) {
 		printf("Failed to load bg image!\n");
 		return false;
 	}
@@ -156,11 +160,13 @@ bool loadMedia () {
 		}
 
 		// Render text
+		/*
 		SDL_Color textColor = { 255, 255, 255 };
 		if (!g_textTexture.LoadFromRenderedText("The quick brown fox jumps over the lazy dog", textColor)) {
 			printf("Failed to render text texture!\n");
 			return false;
 		}
+		*/
 	}
 
     return true;
@@ -171,7 +177,7 @@ bool loadMedia () {
 void close () {
 
 	// Free loaded data.
-	g_textTexture.Free();
+	//g_textTexture.Free();
 	g_fgTexture.Free();
 	g_bgTexture.Free();
 
@@ -272,30 +278,32 @@ int main (int argc, char ** argv) {
 #endif
 
 		SDL_RenderSetViewport(g_renderer, nullptr);
-		g_bgTexture.Render(0, 0);
+		g_bgTexture.Render(g_renderer, 0, 0);
 		// Test src clip rect in TextureWrapper class.
 		SDL_Rect srcRect = { 512, 1280, 128, 256 };
 		g_fgTexture.SetColor(0xFF, 0xFF, 0xFF);
-		g_fgTexture.Render(100, 40, &srcRect);
+		g_fgTexture.Render(g_renderer, 100, 40, &srcRect);
 
 		// Test animation.
 		const unsigned animFrame = (g_frameCounter / 16) % arrsize(s_animRects);
-		g_fgTexture.Render(100 - srcRect.w, 40, &s_animRects[animFrame]);
+		g_fgTexture.Render(g_renderer, 100 - srcRect.w, 40, &s_animRects[animFrame]);
 
 		// Rotation and flipping
-		g_fgTexture.Render(100 - srcRect.w, 40 + srcRect.h, &srcRect, 45.0 /* rotDegrees */);
-		g_fgTexture.Render(100            , 40 + srcRect.h, &srcRect, 45.0, nullptr /* rotCenter */, SDL_FLIP_HORIZONTAL);
-		g_fgTexture.Render(100 + srcRect.w, 40 + srcRect.h, &srcRect, 45.0 + 1.0 * g_frameCounter, nullptr /* rotCenter */, SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL));
+		g_fgTexture.Render(g_renderer, 100 - srcRect.w, 40 + srcRect.h, &srcRect, 45.0 /* rotDegrees */);
+		g_fgTexture.Render(g_renderer, 100            , 40 + srcRect.h, &srcRect, 45.0, nullptr /* rotCenter */, SDL_FLIP_HORIZONTAL);
+		g_fgTexture.Render(g_renderer, 100 + srcRect.w, 40 + srcRect.h, &srcRect, 45.0 + 1.0 * g_frameCounter, nullptr /* rotCenter */, SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL));
 
 		// Test color modulation.
 		g_fgTexture.SetColor(0xFF, 0x00, 0x00);
-		g_fgTexture.Render(100 + srcRect.w, 40, &srcRect);
+		g_fgTexture.Render(g_renderer, 100 + srcRect.w, 40, &srcRect);
 
 		// Test text rendering.
+		/*
 		g_textTexture.Render(
 			(s_screenWidth  - g_textTexture.GetWidth())  / 2,
 			(s_screenHeight - g_textTexture.GetHeight()) / 2
 		);
+		*/
 
 		SDL_RenderPresent(g_renderer);
 
@@ -312,51 +320,7 @@ int main (int argc, char ** argv) {
 }
 
 
-TextureWrapper::TextureWrapper () :
-	m_texture(nullptr),
-	m_width(0),
-	m_height(0)
-{}
-
-TextureWrapper::~TextureWrapper () {
-	Free();
-}
-
-bool TextureWrapper::LoadFromFile (const char * path, bool colorKeying, uint8_t r, uint8_t g, uint8_t b) {
-
-	Free();
-
-	SDL_Surface * tempSurface = IMG_Load(path);
-	if (!tempSurface) {
-		printf("SDL_image failed to load {%s}.  %s\n", path, IMG_GetError());
-		return false;
-	}
-
-	// Have to set the color key (transparent color) on the surface before creating a texture from it.
-	if (colorKeying) {
-		SDL_SetColorKey(
-			tempSurface,
-			SDL_TRUE /* enable/disable color key */,
-			SDL_MapRGB(tempSurface->format, r, g, b)
-		);
-	}
-
-	m_texture = SDL_CreateTextureFromSurface(g_renderer, tempSurface);
-	if (!m_texture) {
-		printf("SDL failed to create a texture from surface for {%s}.  %s\n", path, SDL_GetError());
-		SDL_FreeSurface(tempSurface);
-		return false;
-	}
-
-	m_width  = tempSurface->w;
-	m_height = tempSurface->h;
-
-	SDL_FreeSurface(tempSurface);
-
-	return m_texture != nullptr;
-
-}
-
+/*
 bool TextureWrapper::LoadFromRenderedText (const char * textureText, SDL_Color textColor) {
 	// Get rid of pre-existing texture (if any)
 	Free();
@@ -383,44 +347,5 @@ bool TextureWrapper::LoadFromRenderedText (const char * textureText, SDL_Color t
 	SDL_FreeSurface(textSurface);
 	return true;
 }
+*/
 
-void TextureWrapper::Free () {
-	if (!m_texture)
-		return;
-
-	SDL_DestroyTexture(m_texture);
-	m_texture = nullptr;
-	m_width   = 0;
-	m_height  = 0;
-}
-
-void TextureWrapper::SetColor (uint8_t r, uint8_t g, uint8_t b) {
-	SDL_SetTextureColorMod(m_texture, r, g, b);
-}
-
-void TextureWrapper::SetAlpha (uint8_t a) {
-	SDL_SetTextureAlphaMod(m_texture, a);
-}
-
-void TextureWrapper::SetBlendMode (SDL_BlendMode blendMode) {
-	SDL_SetTextureBlendMode(m_texture, blendMode);
-}
-
-void TextureWrapper::Render (
-	unsigned          x,
-	unsigned          y,
-	const SDL_Rect *  srcRect,
-	double            rotDegrees,
-	const SDL_Point * rotCenter,
-	SDL_RendererFlip  flip
-) const {
-
-	SDL_Rect destRect = { int(x), int(y), int(m_width), int(m_height) };
-	if (srcRect) {
-		destRect.w = srcRect->w;
-		destRect.h = srcRect->h;
-	}
-
-	SDL_RenderCopyEx(g_renderer, m_texture, srcRect, &destRect, rotDegrees, rotCenter, flip);
-
-}

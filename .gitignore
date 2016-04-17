@@ -1,6 +1,7 @@
 # Vim
 *~
 *.swp
+*.swo
 *.vim
 
 # Visual Studio
