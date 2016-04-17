@@ -17,50 +17,15 @@
 #include <csaru-game2dlib-cpp/csaru-game2dlib-cpp.h>
 
 
-/*
-class TextureWrapper {
-private:
-	SDL_Texture * m_texture;
-	unsigned      m_width;
-	unsigned      m_height;
-
-public:
-	TextureWrapper ();
-	~TextureWrapper ();
-
-	bool LoadFromFile (
-		const char * path,
-		bool         colorKeying = false,
-		uint8_t      r           = 0xFF,
-		uint8_t      g           = 0x00,
-		uint8_t      b           = 0xFF
-	);
-
-	bool LoadFromRenderedText (const char * textureText, SDL_Color textColor);
-
-	void Free ();
-
-	void SetColor (uint8_t r, uint8_t g, uint8_t b);
-	void SetAlpha (uint8_t a);
-	void SetBlendMode (SDL_BlendMode blendMode);
-
-	void Render (unsigned x, unsigned y, const SDL_Rect * srcRect = nullptr, double rotDegrees = 0.0, const SDL_Point * rotCenter = nullptr, SDL_RendererFlip flip = SDL_FLIP_NONE) const;
-
-	unsigned GetWidth () const   { return m_width;  }
-	unsigned GetHeight () const  { return m_height; }
-};
-*/
-
-
 static const int  s_screenWidth       = 640;
 static const int  s_screenHeight      = 480;
 static const char s_testImageSource[] = "kenney/platformer_redux/spritesheet_ground.png";
 
-static unsigned       g_frameCounter = 0;
-static SDL_Window *   g_window       = nullptr;
-static SDL_Renderer * g_renderer     = nullptr;
-static TTF_Font *     g_font         = nullptr;
-//static TextureWrapper g_textTexture;
+static unsigned         g_frameCounter = 0;
+static SDL_Window *     g_window       = nullptr;
+static SDL_Renderer *   g_renderer     = nullptr;
+static TTF_Font *       g_font         = nullptr;
+static CSaru2d::Texture g_textTexture;
 static CSaru2d::Texture g_bgTexture;
 static CSaru2d::Texture g_fgTexture;
 
@@ -160,13 +125,11 @@ bool loadMedia () {
 		}
 
 		// Render text
-		/*
 		SDL_Color textColor = { 255, 255, 255 };
-		if (!g_textTexture.LoadFromRenderedText("The quick brown fox jumps over the lazy dog", textColor)) {
+		if (!g_textTexture.LoadFromRenderedText(g_renderer, g_font, "The quick brown fox jumps over the lazy dog", textColor)) {
 			printf("Failed to render text texture!\n");
 			return false;
 		}
-		*/
 	}
 
     return true;
@@ -177,7 +140,7 @@ bool loadMedia () {
 void close () {
 
 	// Free loaded data.
-	//g_textTexture.Free();
+	g_textTexture.Free();
 	g_fgTexture.Free();
 	g_bgTexture.Free();
 
@@ -298,12 +261,11 @@ int main (int argc, char ** argv) {
 		g_fgTexture.Render(g_renderer, 100 + srcRect.w, 40, &srcRect);
 
 		// Test text rendering.
-		/*
 		g_textTexture.Render(
+			g_renderer,
 			(s_screenWidth  - g_textTexture.GetWidth())  / 2,
 			(s_screenHeight - g_textTexture.GetHeight()) / 2
 		);
-		*/
 
 		SDL_RenderPresent(g_renderer);
 
@@ -318,34 +280,4 @@ int main (int argc, char ** argv) {
     return 0;
 
 }
-
-
-/*
-bool TextureWrapper::LoadFromRenderedText (const char * textureText, SDL_Color textColor) {
-	// Get rid of pre-existing texture (if any)
-	Free();
-
-	// Render text surface
-	SDL_Surface * textSurface = TTF_RenderText_Solid(g_font, textureText, textColor);
-	if (!textSurface) {
-		printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
-		return false;
-	}
-
-	// Create texture from surface pixels
-	m_texture = SDL_CreateTextureFromSurface(g_renderer, textSurface);
-	if (!m_texture) {
-		printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
-		return false;
-	}
-
-	// Get image dimensions
-	m_width  = textSurface->w;
-	m_height = textSurface->h;
-
-	// Get rid of old surface
-	SDL_FreeSurface(textSurface);
-	return true;
-}
-*/
 
