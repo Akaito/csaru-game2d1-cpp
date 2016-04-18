@@ -11,8 +11,6 @@
 #	include <SDL2/SDL_ttf.h>
 #endif
 
-#include <stdio.h>
-
 #include <csaru-core-cpp/csaru-core-cpp.h>
 #include <csaru-game2dlib-cpp/csaru-game2dlib-cpp.h>
 
@@ -28,6 +26,9 @@ static TTF_Font *       g_font         = nullptr;
 static CSaru2d::Texture g_textTexture;
 static CSaru2d::Texture g_bgTexture;
 static CSaru2d::Texture g_fgTexture;
+
+static const unsigned        s_gameObjectCount = 1;
+static CSaruGame::GameObject g_gobs[s_gameObjectCount];
 
 static SDL_Rect s_testRects[] = {
     {   0,   0, 128, 128 },
@@ -50,7 +51,7 @@ static SDL_Rect s_viewportRects[] = {
 bool init () {
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        printf("SDL failed to initialize.  %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to initialize.  %s\n", SDL_GetError());
         return false;
     }
 
@@ -64,7 +65,7 @@ bool init () {
         SDL_WINDOW_SHOWN
     );
     if (!g_window) {
-        printf("SDL failed to create a window.  %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to create a window.  %s\n", SDL_GetError());
         return false;
     }
 
@@ -75,7 +76,7 @@ bool init () {
 		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
 	);
 	if (!g_renderer) {
-		printf("SDL failed to create renderer.  %s\n", SDL_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to create renderer.  %s\n", SDL_GetError());
 		return false;
 	}
 
@@ -85,13 +86,13 @@ bool init () {
 	// Initialize SDL_image extension.
 	int imgFlags = IMG_INIT_PNG;
 	if (!(IMG_Init(imgFlags) & imgFlags)) {
-		printf("SDL_image failed to initialize.  %s\n", IMG_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_image failed to initialize.  %s\n", IMG_GetError());
 		return false;
 	}
 
 	// Initialize SDL_ttf
 	if (TTF_Init() == -1) {
-		printf("SDL_ttf could not initialize!  %s\n", TTF_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_ttf could not initialize!  %s\n", TTF_GetError());
 		return false;
 	}
 
@@ -103,12 +104,12 @@ bool init () {
 bool loadMedia () {
 
 	if (!g_bgTexture.LoadFromFile(g_renderer, "testImage.png", false, 0x00, 0x00, 0x00)) {
-		printf("Failed to load bg image!\n");
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load bg image!\n");
 		return false;
 	}
 
 	if (!g_fgTexture.LoadFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png")) {
-		printf("Failed to load fg image!\n");
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load fg image!\n");
 		return false;
 	}
 	g_fgTexture.SetBlendMode(SDL_BLENDMODE_BLEND);
@@ -117,14 +118,14 @@ bool loadMedia () {
 	{
 		g_font = TTF_OpenFont("ubuntu-font-family/UbuntuMono-B.ttf", 28);
 		if (!g_font) {
-			printf("Failed to load ttf font!  SDL_ttf Error: %s\n", TTF_GetError());
+			SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load ttf font!  SDL_ttf Error: %s\n", TTF_GetError());
 			return false;
 		}
 
 		// Render text
 		SDL_Color textColor = { 255, 255, 255 };
 		if (!g_textTexture.LoadFromRenderedText(g_renderer, g_font, "The quick brown fox jumps over the lazy dog", textColor)) {
-			printf("Failed to render text texture!\n");
+			SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to render text texture!\n");
 			return false;
 		}
 	}
@@ -164,8 +165,8 @@ void close () {
 
 int main (int argc, char ** argv) {
 
-    ref(argc);
-    ref(argv);
+    unused(argc);
+    unused(argv);
 
     // initialize and load
     if (!init())

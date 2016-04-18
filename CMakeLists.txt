@@ -21,6 +21,8 @@ CSaru_Bin_Console(1.5 "${src_files}" "${header_files}")
 set(CXX_STANDARD_REQUIRED true)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
 
+CSaru_UseVendor("CML")
+
 CSaru_Depends("csaru-game2dlib-cpp")
 CSaru_Depends("csaru-core-cpp")
 
