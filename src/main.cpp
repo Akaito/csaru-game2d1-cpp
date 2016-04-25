@@ -19,6 +19,8 @@ static const int  s_screenWidth       = 640;
 static const int  s_screenHeight      = 480;
 static const char s_testImageSource[] = "kenney/platformer_redux/spritesheet_ground.png";
 
+static CSaruGame::Timer g_timer;
+
 static unsigned         g_frameCounter = 0;
 static SDL_Window *     g_window       = nullptr;
 static SDL_Renderer *   g_renderer     = nullptr;
@@ -54,6 +56,10 @@ bool init () {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to initialize.  %s\n", SDL_GetError());
         return false;
     }
+
+	g_timer.UpdateFrequency();
+	g_timer.Reset();
+	g_timer.SetPaused(false);
 
 	// Create main window.
     g_window = SDL_CreateWindow(
@@ -96,12 +102,22 @@ bool init () {
 		return false;
 	}
 
+	g_timer.Advance();
+	SDL_LogInfo(
+		SDL_LOG_CATEGORY_APPLICATION,
+		"game2d1 init took %u ticks (%u Ms)",
+		g_timer.GetTicks(),
+		g_timer.GetMs()
+	);
+
     return true;
 
 }
 
 
 bool loadMedia () {
+
+	g_timer.Reset();
 
 	if (!g_bgTexture.LoadFromFile(g_renderer, "testImage.png", false, 0x00, 0x00, 0x00)) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load bg image!\n");
@@ -133,6 +149,14 @@ bool loadMedia () {
 	// setup animation(s)
 	g_yellowAlienWalkAnim.SetSrcRect(0, SDL_Rect{ 128, 1024, 128, 256 });
 	g_yellowAlienWalkAnim.SetSrcRect(1, SDL_Rect{ 128,  768, 128, 256 });
+
+	g_timer.Advance();
+	SDL_LogInfo(
+		SDL_LOG_CATEGORY_APPLICATION,
+		"game2d1 load took %u ticks (%u Ms)",
+		g_timer.GetTicks(),
+		g_timer.GetMs()
+	);
 
     return true;
 
