@@ -29,8 +29,11 @@ static CSaru2d::Texture g_textTexture;
 static CSaru2d::Texture g_bgTexture;
 static CSaru2d::Texture g_fgTexture;
 
-static const unsigned        s_gameObjectCount = 1;
-static CSaruGame::GameObject g_gobs[s_gameObjectCount];
+enum Gobs {
+	GOB_PLAIN = 0,
+	GOBS
+};
+static CSaruGame::GameObject g_gobs[GOBS];
 
 static SDL_Rect s_testRects[] = {
     {   0,   0, 128, 128 },
@@ -102,6 +105,11 @@ bool init () {
 		return false;
 	}
 
+	// Prepare "level"
+	g_gobs[GOB_PLAIN].GetTransform().SetPosition(100.0f, 40.0f, 0.0f);
+	g_gobs[GOB_PLAIN].AddComponent(new CSaruGame::GocSpriteSimple(1)); // TODO : Don't just leak this
+
+	// perf/timer testing
 	g_timer.Advance();
 	SDL_LogInfo(
 		SDL_LOG_CATEGORY_APPLICATION,
@@ -129,6 +137,12 @@ bool loadMedia () {
 		return false;
 	}
 	g_fgTexture.SetBlendMode(SDL_BLENDMODE_BLEND);
+
+	auto * goc = g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSpriteSimple>();
+	SDL_assert_release(goc);
+	if (!goc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
+		return false;
+	goc->SrcRect() = SDL_Rect{ 512, 1280, 128, 256 };
 
 	// Open the font
 	{
@@ -215,8 +229,15 @@ int main (int argc, char ** argv) {
                     case SDLK_LEFT:  g_testRectIndex = 3; break;
                     case SDLK_RIGHT: g_testRectIndex = 4; break;
 
-					case SDLK_w: g_fgTexture.SetAlpha(0xFF); break;
-					case SDLK_s: g_fgTexture.SetAlpha(0x7F); break;
+					case SDLK_w: {
+						g_fgTexture.SetAlpha(0xFF);
+						g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0xFF);
+					} break;
+
+					case SDLK_s: {
+						g_fgTexture.SetAlpha(0x7F);
+						g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0x7F);
+					} break;
 
                     default:         g_testRectIndex = 0; break;
                 }
@@ -271,7 +292,7 @@ int main (int argc, char ** argv) {
 		// Test src clip rect in TextureWrapper class.
 		SDL_Rect srcRect = { 512, 1280, 128, 256 };
 		g_fgTexture.SetColor(0xFF, 0xFF, 0xFF);
-		g_fgTexture.Render(g_renderer, 100, 40, &srcRect);
+		g_gobs[GOB_PLAIN].Render();
 
 		// Test animation.
 		const unsigned animFrame = (g_frameCounter / 16) % g_yellowAlienWalkAnim.GetFrameCount();
