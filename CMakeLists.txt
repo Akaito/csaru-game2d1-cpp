@@ -26,6 +26,13 @@ CSaru_UseVendor("CML")
 CSaru_Depends("csaru-game2dlib-cpp")
 CSaru_Depends("csaru-core-cpp")
 
+if (UNIX)
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
+	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
+endif()
+
+set(CMAKE_BUILD_TYPE "Debug")
+
 # The SDL2-finding code below is from
 # http://stackoverflow.com/questions/23850472/how-to-use-sdl2-and-sdl-image-with-cmake
 
