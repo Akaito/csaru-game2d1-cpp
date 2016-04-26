@@ -31,6 +31,7 @@ static CSaru2d::Texture g_fgTexture;
 
 enum Gobs {
 	GOB_PLAIN = 0,
+	GOB_COLOR_MOD,
 	GOBS
 };
 static CSaruGame::GameObject g_gobs[GOBS];
@@ -106,8 +107,11 @@ bool init () {
 	}
 
 	// Prepare "level"
+	g_gobs[GOB_PLAIN].AddComponent(new CSaruGame::GocSpriteSimple(1));
 	g_gobs[GOB_PLAIN].GetTransform().SetPosition(100.0f, 40.0f, 0.0f);
-	g_gobs[GOB_PLAIN].AddComponent(new CSaruGame::GocSpriteSimple(1)); // TODO : Don't just leak this
+	// color-mod test
+	g_gobs[GOB_COLOR_MOD].AddComponent(new CSaruGame::GocSpriteSimple(2));
+	g_gobs[GOB_COLOR_MOD].GetTransform().SetPosition(228.0f, 40.0f, 0.0f);
 
 	// perf/timer testing
 	g_timer.Advance();
@@ -138,11 +142,18 @@ bool loadMedia () {
 	}
 	g_fgTexture.SetBlendMode(SDL_BLENDMODE_BLEND);
 
-	auto * goc = g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSpriteSimple>();
-	SDL_assert_release(goc);
-	if (!goc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
+	auto * spriteGoc = g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSpriteSimple>();
+	SDL_assert_release(spriteGoc);
+	if (!spriteGoc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
 		return false;
-	goc->SrcRect() = SDL_Rect{ 512, 1280, 128, 256 };
+	spriteGoc->SrcRect() = SDL_Rect{ 512, 1280, 128, 256 };
+
+	spriteGoc = g_gobs[GOB_COLOR_MOD].GetGoc<CSaruGame::GocSpriteSimple>();
+	SDL_assert_release(spriteGoc);
+	if (!spriteGoc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
+		return false;
+	spriteGoc->SrcRect() = SDL_Rect{ 512, 1280, 128, 256 };
+	spriteGoc->GetTexture()->SetColor(0xFF, 0x00, 0x00);
 
 	// Open the font
 	{
@@ -232,11 +243,13 @@ int main (int argc, char ** argv) {
 					case SDLK_w: {
 						g_fgTexture.SetAlpha(0xFF);
 						g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0xFF);
+						g_gobs[GOB_COLOR_MOD].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0xFF);
 					} break;
 
 					case SDLK_s: {
 						g_fgTexture.SetAlpha(0x7F);
 						g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0x7F);
+						g_gobs[GOB_COLOR_MOD].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0x7F);
 					} break;
 
                     default:         g_testRectIndex = 0; break;
@@ -304,8 +317,9 @@ int main (int argc, char ** argv) {
 		g_fgTexture.Render(g_renderer, 100 + srcRect.w, 40 + srcRect.h, &srcRect, 45.0 + 1.0 * g_frameCounter, nullptr /* rotCenter */, SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL));
 
 		// Test color modulation.
-		g_fgTexture.SetColor(0xFF, 0x00, 0x00);
-		g_fgTexture.Render(g_renderer, 100 + srcRect.w, 40, &srcRect);
+		//g_fgTexture.SetColor(0xFF, 0x00, 0x00);
+		//g_fgTexture.Render(g_renderer, 100 + srcRect.w, 40, &srcRect);
+		g_gobs[GOB_COLOR_MOD].Render();
 
 		// Test text rendering.
 		g_textTexture.Render(
