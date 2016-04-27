@@ -11,6 +11,8 @@
 #	include <SDL2/SDL_ttf.h>
 #endif
 
+#include <cml/cml.h>
+
 #include <csaru-core-cpp/csaru-core-cpp.h>
 #include <csaru-game2dlib-cpp/csaru-game2dlib-cpp.h>
 
@@ -32,6 +34,9 @@ static CSaru2d::Texture g_fgTexture;
 enum Gobs {
 	GOB_PLAIN = 0,
 	GOB_COLOR_MOD,
+	GOB_ROTATED,
+	GOB_ROTATED_FLIP,
+	GOB_ROTATING,
 	GOBS
 };
 static CSaruGame::GameObject g_gobs[GOBS];
@@ -112,6 +117,21 @@ bool init () {
 	// color-mod test
 	g_gobs[GOB_COLOR_MOD].AddComponent(new CSaruGame::GocSpriteSimple(2));
 	g_gobs[GOB_COLOR_MOD].GetTransform().SetPosition(228.0f, 40.0f, 0.0f);
+	// rotated test
+	g_gobs[GOB_ROTATED].AddComponent(new CSaruGame::GocSpriteSimple(3));
+	g_gobs[GOB_ROTATED].GetTransform().SetPosition(-28.0f, 296.0f, 0.0f);
+	g_gobs[GOB_ROTATED].GetTransform().SetRotation((45.0f / 180.0f) * M_PI);
+	// rotated-and-flipped test
+	g_gobs[GOB_ROTATED_FLIP].AddComponent(new CSaruGame::GocSpriteSimple(4));
+	g_gobs[GOB_ROTATED_FLIP].GetTransform().SetPosition(100.0f, 296.0f, 0.0f);
+	g_gobs[GOB_ROTATED_FLIP].GetTransform().SetRotation((45.0f / 180.0f) * M_PI);
+	g_gobs[GOB_ROTATED_FLIP].GetGoc<CSaruGame::GocSpriteSimple>()->SetFlip(SDL_FLIP_HORIZONTAL);
+	// rotating
+	g_gobs[GOB_ROTATING].AddComponent(new CSaruGame::GocSpriteSimple(5));
+	g_gobs[GOB_ROTATING].GetTransform().SetPosition(228.0f, 296.0f, 0.0f);
+	g_gobs[GOB_ROTATING].GetGoc<CSaruGame::GocSpriteSimple>()->SetFlip(
+		SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL)
+	);
 
 	// perf/timer testing
 	g_timer.Advance();
@@ -142,18 +162,20 @@ bool loadMedia () {
 	}
 	g_fgTexture.SetBlendMode(SDL_BLENDMODE_BLEND);
 
-	auto * spriteGoc = g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSpriteSimple>();
-	SDL_assert_release(spriteGoc);
-	if (!spriteGoc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
-		return false;
-	spriteGoc->SrcRect() = SDL_Rect{ 512, 1280, 128, 256 };
+	// load GocSpriteSimple textures
+	for (unsigned i = GOB_PLAIN; i <= GOB_ROTATING; ++i) {
+		auto * spriteGoc = g_gobs[i].GetGoc<CSaruGame::GocSpriteSimple>();
+		SDL_assert_release(spriteGoc);
+		if (!spriteGoc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
+			return false;
+		spriteGoc->SrcRect() = SDL_Rect{ 512, 1280, 128, 256 };
 
-	spriteGoc = g_gobs[GOB_COLOR_MOD].GetGoc<CSaruGame::GocSpriteSimple>();
-	SDL_assert_release(spriteGoc);
-	if (!spriteGoc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
-		return false;
-	spriteGoc->SrcRect() = SDL_Rect{ 512, 1280, 128, 256 };
-	spriteGoc->GetTexture()->SetColor(0xFF, 0x00, 0x00);
+		switch (i) {
+			case GOB_COLOR_MOD: {
+				spriteGoc->GetTexture()->SetColor(0xFF, 0x00, 0x00);
+			} break;
+		}
+	}
 
 	// Open the font
 	{
@@ -242,14 +264,16 @@ int main (int argc, char ** argv) {
 
 					case SDLK_w: {
 						g_fgTexture.SetAlpha(0xFF);
-						g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0xFF);
-						g_gobs[GOB_COLOR_MOD].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0xFF);
+						for (unsigned i = GOB_PLAIN; i <= GOB_ROTATING; ++i) {
+							g_gobs[i].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0xFF);
+						}
 					} break;
 
 					case SDLK_s: {
 						g_fgTexture.SetAlpha(0x7F);
-						g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0x7F);
-						g_gobs[GOB_COLOR_MOD].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0x7F);
+						for (unsigned i = GOB_PLAIN; i <= GOB_ROTATING; ++i) {
+							g_gobs[i].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0x7F);
+						}
 					} break;
 
                     default:         g_testRectIndex = 0; break;
@@ -304,7 +328,6 @@ int main (int argc, char ** argv) {
 		g_bgTexture.Render(g_renderer, 0, 0);
 		// Test src clip rect in TextureWrapper class.
 		SDL_Rect srcRect = { 512, 1280, 128, 256 };
-		g_fgTexture.SetColor(0xFF, 0xFF, 0xFF);
 		g_gobs[GOB_PLAIN].Render();
 
 		// Test animation.
@@ -312,13 +335,14 @@ int main (int argc, char ** argv) {
 		g_fgTexture.Render(g_renderer, 100 - srcRect.w, 40, &g_yellowAlienWalkAnim.GetSrcRect(animFrame));
 
 		// Rotation and flipping
-		g_fgTexture.Render(g_renderer, 100 - srcRect.w, 40 + srcRect.h, &srcRect, 45.0 /* rotDegrees */);
-		g_fgTexture.Render(g_renderer, 100            , 40 + srcRect.h, &srcRect, 45.0, nullptr /* rotCenter */, SDL_FLIP_HORIZONTAL);
-		g_fgTexture.Render(g_renderer, 100 + srcRect.w, 40 + srcRect.h, &srcRect, 45.0 + 1.0 * g_frameCounter, nullptr /* rotCenter */, SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL));
+		g_gobs[GOB_ROTATED].Render();
+		g_gobs[GOB_ROTATED_FLIP].Render();
+		g_gobs[GOB_ROTATING].GetTransform().SetRotation(
+			((45.0f + 1.0f * g_frameCounter) / 180.0f) * M_PI
+		);
+		g_gobs[GOB_ROTATING].Render();
 
 		// Test color modulation.
-		//g_fgTexture.SetColor(0xFF, 0x00, 0x00);
-		//g_fgTexture.Render(g_renderer, 100 + srcRect.w, 40, &srcRect);
 		g_gobs[GOB_COLOR_MOD].Render();
 
 		// Test text rendering.
