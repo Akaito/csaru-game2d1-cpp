@@ -37,6 +37,7 @@ enum Gobs {
 	GOB_ROTATED,
 	GOB_ROTATED_FLIP,
 	GOB_ROTATING,
+	//GOB_ANIMATING,
 	GOBS
 };
 static CSaruGame::GameObject g_gobs[GOBS];
@@ -112,6 +113,7 @@ bool init () {
 	}
 
 	// Prepare "level"
+
 	g_gobs[GOB_PLAIN].AddComponent(new CSaruGame::GocSpriteSimple(1));
 	g_gobs[GOB_PLAIN].GetTransform().SetPosition(100.0f, 40.0f, 0.0f);
 	// color-mod test
@@ -125,12 +127,20 @@ bool init () {
 	g_gobs[GOB_ROTATED_FLIP].AddComponent(new CSaruGame::GocSpriteSimple(4));
 	g_gobs[GOB_ROTATED_FLIP].GetTransform().SetPosition(100.0f, 296.0f, 0.0f);
 	g_gobs[GOB_ROTATED_FLIP].GetTransform().SetRotation((45.0f / 180.0f) * M_PI);
-	g_gobs[GOB_ROTATED_FLIP].GetGoc<CSaruGame::GocSpriteSimple>()->SetFlip(SDL_FLIP_HORIZONTAL);
+	//g_gobs[GOB_ROTATED_FLIP].GetGoc<CSaruGame::GocSpriteSimple>()->SetFlip(SDL_FLIP_HORIZONTAL);
+	auto a = g_gobs[GOB_ROTATED_FLIP].GetGoc<CSaruGame::GocSpriteSimple>();
+	SDL_assert_release(a);
+	a->SetFlip(SDL_FLIP_HORIZONTAL);
 	// rotating
 	g_gobs[GOB_ROTATING].AddComponent(new CSaruGame::GocSpriteSimple(5));
 	g_gobs[GOB_ROTATING].GetTransform().SetPosition(228.0f, 296.0f, 0.0f);
 	g_gobs[GOB_ROTATING].GetGoc<CSaruGame::GocSpriteSimple>()->SetFlip(
 		SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL)
+	);
+	// animating
+	g_gobs[GOB_PLAIN].AddComponent(new CSaruGame::GocSrcRectAnimator(1));
+	g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSrcRectAnimator>()->SetSrcRect(
+		&g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSpriteSimple>()->GetSrcRect()
 	);
 
 	// perf/timer testing
@@ -168,7 +178,7 @@ bool loadMedia () {
 		SDL_assert_release(spriteGoc);
 		if (!spriteGoc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
 			return false;
-		spriteGoc->SrcRect() = SDL_Rect{ 512, 1280, 128, 256 };
+		spriteGoc->GetSrcRect() = SDL_Rect{ 512, 1280, 128, 256 };
 
 		switch (i) {
 			case GOB_COLOR_MOD: {
@@ -248,6 +258,8 @@ int main (int argc, char ** argv) {
     bool readyToQuit = false;
     SDL_Event e;
 
+	g_timer.Reset();
+
     while (!readyToQuit) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
@@ -280,6 +292,12 @@ int main (int argc, char ** argv) {
                 }
             }
         }
+
+		// Update all game objects.
+		const float dt = g_timer.GetMsDelta() / 1000.0f;
+		for (unsigned i = 0; i < GOBS; ++i) {
+			g_gobs[i].Update(dt);
+		}
 
 		// Clear the renderer to prepare for drawing.
 		SDL_SetRenderDrawColor(g_renderer, 0x3F, 0x00, 0x3F, 0xFF);
@@ -355,6 +373,7 @@ int main (int argc, char ** argv) {
 		SDL_RenderPresent(g_renderer);
 
 		++g_frameCounter;
+		g_timer.Advance();
     }
 
     // wait
