@@ -29,7 +29,6 @@ static SDL_Renderer *   g_renderer     = nullptr;
 static TTF_Font *       g_font         = nullptr;
 static CSaru2d::Texture g_textTexture;
 static CSaru2d::Texture g_bgTexture;
-static CSaru2d::Texture g_fgTexture;
 
 enum Gobs {
 	GOB_PLAIN = 0,
@@ -37,7 +36,7 @@ enum Gobs {
 	GOB_ROTATED,
 	GOB_ROTATED_FLIP,
 	GOB_ROTATING,
-	//GOB_ANIMATING,
+	GOB_ANIMATING,
 	GOBS
 };
 static CSaruGame::GameObject g_gobs[GOBS];
@@ -138,10 +137,18 @@ bool init () {
 		SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL)
 	);
 	// animating
-	g_gobs[GOB_PLAIN].AddComponent(new CSaruGame::GocSrcRectAnimator(1));
-	g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSrcRectAnimator>()->SetSrcRect(
-		&g_gobs[GOB_PLAIN].GetGoc<CSaruGame::GocSpriteSimple>()->GetSrcRect()
-	);
+	{
+		g_gobs[GOB_ANIMATING].AddComponent(new CSaruGame::GocSpriteSimple(6));
+		g_gobs[GOB_ANIMATING].AddComponent(new CSaruGame::GocSrcRectAnimator(1));
+
+		g_gobs[GOB_ANIMATING].GetTransform().SetPosition(-28.0f, 40.0f, 0.0f);
+
+		auto rectAnimator = g_gobs[GOB_ANIMATING].GetGoc<CSaruGame::GocSrcRectAnimator>();
+		rectAnimator->SetTargetRect(
+			&g_gobs[GOB_ANIMATING].GetGoc<CSaruGame::GocSpriteSimple>()->GetSrcRect()
+		);
+		rectAnimator->SetAnimation(&g_yellowAlienWalkAnim);
+	}
 
 	// perf/timer testing
 	g_timer.Advance();
@@ -166,14 +173,8 @@ bool loadMedia () {
 		return false;
 	}
 
-	if (!g_fgTexture.LoadFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png")) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load fg image!\n");
-		return false;
-	}
-	g_fgTexture.SetBlendMode(SDL_BLENDMODE_BLEND);
-
 	// load GocSpriteSimple textures
-	for (unsigned i = GOB_PLAIN; i <= GOB_ROTATING; ++i) {
+	for (unsigned i = GOB_PLAIN; i < GOBS; ++i) {
 		auto * spriteGoc = g_gobs[i].GetGoc<CSaruGame::GocSpriteSimple>();
 		SDL_assert_release(spriteGoc);
 		if (!spriteGoc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
@@ -206,6 +207,8 @@ bool loadMedia () {
 	// setup animation(s)
 	g_yellowAlienWalkAnim.SetSrcRect(0, SDL_Rect{ 128, 1024, 128, 256 });
 	g_yellowAlienWalkAnim.SetSrcRect(1, SDL_Rect{ 128,  768, 128, 256 });
+	g_yellowAlienWalkAnim.SetFrameDuration(0, 250);
+	g_yellowAlienWalkAnim.SetFrameDuration(1, 250);
 
 	g_timer.Advance();
 	SDL_LogInfo(
@@ -224,7 +227,6 @@ void close () {
 
 	// Free loaded data.
 	g_textTexture.Free();
-	g_fgTexture.Free();
 	g_bgTexture.Free();
 
 	// Free font data.
@@ -275,15 +277,13 @@ int main (int argc, char ** argv) {
                     case SDLK_RIGHT: g_testRectIndex = 4; break;
 
 					case SDLK_w: {
-						g_fgTexture.SetAlpha(0xFF);
-						for (unsigned i = GOB_PLAIN; i <= GOB_ROTATING; ++i) {
+						for (unsigned i = GOB_PLAIN; i < GOBS; ++i) {
 							g_gobs[i].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0xFF);
 						}
 					} break;
 
 					case SDLK_s: {
-						g_fgTexture.SetAlpha(0x7F);
-						for (unsigned i = GOB_PLAIN; i <= GOB_ROTATING; ++i) {
+						for (unsigned i = GOB_PLAIN; i < GOBS; ++i) {
 							g_gobs[i].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0x7F);
 						}
 					} break;
@@ -342,26 +342,20 @@ int main (int argc, char ** argv) {
 		} // end for each viewport
 #endif
 
+		// Update(s)
+		g_gobs[GOB_ROTATING].GetTransform().SetRotation(
+			((45.0f + 1.0f * g_frameCounter) / 180.0f) * M_PI
+		);
+
+		// Render prep
 		SDL_RenderSetViewport(g_renderer, nullptr);
 		g_bgTexture.Render(g_renderer, 0, 0);
 		// Test src clip rect in TextureWrapper class.
 		SDL_Rect srcRect = { 512, 1280, 128, 256 };
-		g_gobs[GOB_PLAIN].Render();
 
-		// Test animation.
-		const unsigned animFrame = (g_frameCounter / 16) % g_yellowAlienWalkAnim.GetFrameCount();
-		g_fgTexture.Render(g_renderer, 100 - srcRect.w, 40, &g_yellowAlienWalkAnim.GetSrcRect(animFrame));
-
-		// Rotation and flipping
-		g_gobs[GOB_ROTATED].Render();
-		g_gobs[GOB_ROTATED_FLIP].Render();
-		g_gobs[GOB_ROTATING].GetTransform().SetRotation(
-			((45.0f + 1.0f * g_frameCounter) / 180.0f) * M_PI
-		);
-		g_gobs[GOB_ROTATING].Render();
-
-		// Test color modulation.
-		g_gobs[GOB_COLOR_MOD].Render();
+		// Render game objects
+		for (unsigned i = 0; i < GOBS; ++i)
+			g_gobs[i].Render();
 
 		// Test text rendering.
 		g_textTexture.Render(
