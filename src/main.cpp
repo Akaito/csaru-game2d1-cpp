@@ -131,11 +131,18 @@ bool init () {
 	SDL_assert_release(a);
 	a->SetFlip(SDL_FLIP_HORIZONTAL);
 	// rotating
-	g_gobs[GOB_ROTATING].AddComponent(new CSaruGame::GocSpriteSimple(5));
-	g_gobs[GOB_ROTATING].GetTransform().SetPosition(228.0f, 296.0f, 0.0f);
-	g_gobs[GOB_ROTATING].GetGoc<CSaruGame::GocSpriteSimple>()->SetFlip(
-		SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL)
-	);
+	{
+		CSaruGame::GameObject & gobj = g_gobs[GOB_ROTATING];
+		gobj.AddComponent(new CSaruGame::GocSpriteSimple(5));
+		gobj.AddComponent(new CSaruGame::GocGobjRotator(1));
+		gobj.GetTransform().SetPosition(228.0f, 296.0f, 0.0f);
+		gobj.GetGoc<CSaruGame::GocSpriteSimple>()->SetFlip(
+			SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL)
+		);
+		gobj.GetGoc<CSaruGame::GocGobjRotator>()->SetRadiansPerSecond(
+			(60.0f * M_PI) / 180.0f
+		);
+	}
 	// animating
 	{
 		g_gobs[GOB_ANIMATING].AddComponent(new CSaruGame::GocSpriteSimple(6));
@@ -341,11 +348,6 @@ int main (int argc, char ** argv) {
 			}
 		} // end for each viewport
 #endif
-
-		// Update(s)
-		g_gobs[GOB_ROTATING].GetTransform().SetRotation(
-			((45.0f + 1.0f * g_frameCounter) / 180.0f) * M_PI
-		);
 
 		// Render prep
 		SDL_RenderSetViewport(g_renderer, nullptr);
