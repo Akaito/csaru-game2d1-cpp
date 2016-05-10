@@ -36,10 +36,14 @@ set(CMAKE_BUILD_TYPE "Debug")
 # The SDL2-finding code below is from
 # http://stackoverflow.com/questions/23850472/how-to-use-sdl2-and-sdl-image-with-cmake
 
-include(FindPkgConfig)
-pkg_search_module(SDL2 REQUIRED sdl2)
-pkg_search_module(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
-pkg_search_module(SDL2TTF REQUIRED SDL2_ttf>=2.0.0)
+if (UNIX)
+	include(FindPkgConfig)
+	pkg_search_module(SDL2 REQUIRED sdl2)
+	pkg_search_module(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
+	pkg_search_module(SDL2TTF REQUIRED SDL2_ttf>=2.0.0)
+else()
+	message(SEND_ERROR "Non-*nix platform; SDL2-finding style unknown.")
+endif()
 
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})
 target_link_librariES(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
