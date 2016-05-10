@@ -39,7 +39,7 @@ enum Gobs {
 	GOB_ANIMATING,
 	GOBS
 };
-static CSaruGame::GameObject g_gobs[GOBS];
+static CSaruGame::GameObject * g_gobs[GOBS];
 
 static SDL_Rect s_testRects[] = {
     {   0,   0, 128, 128 },
@@ -111,28 +111,32 @@ bool init () {
 		return false;
 	}
 
+	// Prepare gobs
+	for (unsigned i = 0; i < GOBS; ++i) {
+		g_gobs[i] = new CSaruGame::GameObject;
+	}
+
 	// Prepare "level"
 
-	g_gobs[GOB_PLAIN].AddComponent(new CSaruGame::GocSpriteSimple(1));
-	g_gobs[GOB_PLAIN].GetTransform().SetPosition(100.0f, 40.0f, 0.0f);
+	g_gobs[GOB_PLAIN]->AddComponent(new CSaruGame::GocSpriteSimple(1));
+	g_gobs[GOB_PLAIN]->GetTransform().SetPosition(100.0f, 40.0f, 0.0f);
 	// color-mod test
-	g_gobs[GOB_COLOR_MOD].AddComponent(new CSaruGame::GocSpriteSimple(2));
-	g_gobs[GOB_COLOR_MOD].GetTransform().SetPosition(228.0f, 40.0f, 0.0f);
+	g_gobs[GOB_COLOR_MOD]->AddComponent(new CSaruGame::GocSpriteSimple(2));
+	g_gobs[GOB_COLOR_MOD]->GetTransform().SetPosition(228.0f, 40.0f, 0.0f);
 	// rotated test
-	g_gobs[GOB_ROTATED].AddComponent(new CSaruGame::GocSpriteSimple(3));
-	g_gobs[GOB_ROTATED].GetTransform().SetPosition(-28.0f, 296.0f, 0.0f);
-	g_gobs[GOB_ROTATED].GetTransform().SetRotation((45.0f / 180.0f) * M_PI);
+	g_gobs[GOB_ROTATED]->AddComponent(new CSaruGame::GocSpriteSimple(3));
+	g_gobs[GOB_ROTATED]->GetTransform().SetPosition(-28.0f, 296.0f, 0.0f);
+	g_gobs[GOB_ROTATED]->GetTransform().SetRotation((45.0f / 180.0f) * M_PI);
 	// rotated-and-flipped test
-	g_gobs[GOB_ROTATED_FLIP].AddComponent(new CSaruGame::GocSpriteSimple(4));
-	g_gobs[GOB_ROTATED_FLIP].GetTransform().SetPosition(100.0f, 296.0f, 0.0f);
-	g_gobs[GOB_ROTATED_FLIP].GetTransform().SetRotation((45.0f / 180.0f) * M_PI);
-	//g_gobs[GOB_ROTATED_FLIP].GetGoc<CSaruGame::GocSpriteSimple>()->SetFlip(SDL_FLIP_HORIZONTAL);
-	auto a = g_gobs[GOB_ROTATED_FLIP].GetGoc<CSaruGame::GocSpriteSimple>();
+	g_gobs[GOB_ROTATED_FLIP]->AddComponent(new CSaruGame::GocSpriteSimple(4));
+	g_gobs[GOB_ROTATED_FLIP]->GetTransform().SetPosition(100.0f, 296.0f, 0.0f);
+	g_gobs[GOB_ROTATED_FLIP]->GetTransform().SetRotation((45.0f / 180.0f) * M_PI);
+	auto a = g_gobs[GOB_ROTATED_FLIP]->GetGoc<CSaruGame::GocSpriteSimple>();
 	SDL_assert_release(a);
 	a->SetFlip(SDL_FLIP_HORIZONTAL);
 	// rotating
 	{
-		CSaruGame::GameObject & gobj = g_gobs[GOB_ROTATING];
+		CSaruGame::GameObject & gobj = *g_gobs[GOB_ROTATING];
 		gobj.AddComponent(new CSaruGame::GocSpriteSimple(5));
 		gobj.AddComponent(new CSaruGame::GocGobjRotator(1));
 		gobj.GetTransform().SetPosition(228.0f, 296.0f, 0.0f);
@@ -145,14 +149,14 @@ bool init () {
 	}
 	// animating
 	{
-		g_gobs[GOB_ANIMATING].AddComponent(new CSaruGame::GocSpriteSimple(6));
-		g_gobs[GOB_ANIMATING].AddComponent(new CSaruGame::GocSrcRectAnimator(1));
+		g_gobs[GOB_ANIMATING]->AddComponent(new CSaruGame::GocSpriteSimple(6));
+		g_gobs[GOB_ANIMATING]->AddComponent(new CSaruGame::GocSrcRectAnimator(1));
 
-		g_gobs[GOB_ANIMATING].GetTransform().SetPosition(-28.0f, 40.0f, 0.0f);
+		g_gobs[GOB_ANIMATING]->GetTransform().SetPosition(-28.0f, 40.0f, 0.0f);
 
-		auto rectAnimator = g_gobs[GOB_ANIMATING].GetGoc<CSaruGame::GocSrcRectAnimator>();
+		auto rectAnimator = g_gobs[GOB_ANIMATING]->GetGoc<CSaruGame::GocSrcRectAnimator>();
 		rectAnimator->SetTargetRect(
-			&g_gobs[GOB_ANIMATING].GetGoc<CSaruGame::GocSpriteSimple>()->GetSrcRect()
+			&g_gobs[GOB_ANIMATING]->GetGoc<CSaruGame::GocSpriteSimple>()->GetSrcRect()
 		);
 		rectAnimator->SetAnimation(&g_yellowAlienWalkAnim);
 	}
@@ -182,7 +186,7 @@ bool loadMedia () {
 
 	// load GocSpriteSimple textures
 	for (unsigned i = GOB_PLAIN; i < GOBS; ++i) {
-		auto * spriteGoc = g_gobs[i].GetGoc<CSaruGame::GocSpriteSimple>();
+		auto * spriteGoc = g_gobs[i]->GetGoc<CSaruGame::GocSpriteSimple>();
 		SDL_assert_release(spriteGoc);
 		if (!spriteGoc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
 			return false;
@@ -285,13 +289,13 @@ int main (int argc, char ** argv) {
 
 					case SDLK_w: {
 						for (unsigned i = GOB_PLAIN; i < GOBS; ++i) {
-							g_gobs[i].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0xFF);
+							g_gobs[i]->GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0xFF);
 						}
 					} break;
 
 					case SDLK_s: {
 						for (unsigned i = GOB_PLAIN; i < GOBS; ++i) {
-							g_gobs[i].GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0x7F);
+							g_gobs[i]->GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0x7F);
 						}
 					} break;
 
@@ -303,7 +307,7 @@ int main (int argc, char ** argv) {
 		// Update all game objects.
 		const float dt = g_timer.GetMsDelta() / 1000.0f;
 		for (unsigned i = 0; i < GOBS; ++i) {
-			g_gobs[i].Update(dt);
+			g_gobs[i]->Update(dt);
 		}
 
 		// Clear the renderer to prepare for drawing.
@@ -361,7 +365,7 @@ int main (int argc, char ** argv) {
 
 		// Render game objects
 		for (unsigned i = 0; i < GOBS; ++i)
-			g_gobs[i].Render();
+			g_gobs[i]->Render();
 
 		// Test text rendering.
 		g_textTexture.Render(
