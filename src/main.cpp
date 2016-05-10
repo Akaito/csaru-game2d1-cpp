@@ -17,8 +17,8 @@
 #include <csaru-game2dlib-cpp/csaru-game2dlib-cpp.h>
 
 
-static const int  s_screenWidth       = 640;
-static const int  s_screenHeight      = 480;
+static const int  s_screenWidth       = 1366;
+static const int  s_screenHeight      = 768;
 static const char s_testImageSource[] = "kenney/platformer_redux/spritesheet_ground.png";
 
 static CSaruGame::Timer g_timer;
@@ -351,7 +351,11 @@ int main (int argc, char ** argv) {
 
 		// Render prep
 		SDL_RenderSetViewport(g_renderer, nullptr);
-		g_bgTexture.Render(g_renderer, 0, 0);
+		g_bgTexture.Render(
+			g_renderer,
+			s_screenWidth  / 2 - g_bgTexture.GetWidth() / 2,
+			s_screenHeight / 2 - g_bgTexture.GetHeight() / 2
+		);
 		// Test src clip rect in TextureWrapper class.
 		SDL_Rect srcRect = { 512, 1280, 128, 256 };
 
