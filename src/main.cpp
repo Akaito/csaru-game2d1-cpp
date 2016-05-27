@@ -158,7 +158,7 @@ bool init () {
 				simpleReader.ToChild("attributes");
 				if (simpleReader.ToChild("transform")) {
 					if (simpleReader.EnterArray("position")) {
-					CSaruContainer::DataMapReader posReader = simpleReader.GetReader();
+						CSaruContainer::DataMapReader posReader = simpleReader.GetReader();
 						int x = posReader.ReadIntWalk();
 						int y = posReader.ReadIntWalk();
 						int z = posReader.ReadIntWalk();
@@ -186,6 +186,21 @@ bool init () {
 									g_gobs[id]->AddComponent(new CSaruGame::GocSpriteSimple(s_GocSpriteSimpleId++));
 									if (simpleReader.ToChild("properties")) {
 										auto goc = g_gobs[id]->GetGoc<CSaruGame::GocSpriteSimple>();
+										// src_rect
+										{
+											if (simpleReader.EnterArray("src_rect")) {
+												CSaruContainer::DataMapReader posReader = simpleReader.GetReader();
+												int x = posReader.ReadIntWalk();
+												int y = posReader.ReadIntWalk();
+												int w = posReader.ReadIntWalk();
+												int h = posReader.ReadIntWalk();
+												goc->GetSrcRect() = SDL_Rect{x, y, w, h};
+												simpleReader.ExitArray();
+											}
+											else
+												simpleReader.ToParent();
+										}
+
 										// flip
 										{
 											std::string flip = simpleReader.String("flip", "none");
@@ -273,7 +288,7 @@ bool loadMedia () {
 		SDL_assert_release(spriteGoc);
 		if (!spriteGoc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
 			return false;
-		spriteGoc->GetSrcRect() = SDL_Rect{ 512, 1280, 128, 256 };
+		//spriteGoc->GetSrcRect() = SDL_Rect{ 512, 1280, 128, 256 };
 
 		switch (i) {
 			case GOB_COLOR_MOD: {
