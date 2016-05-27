@@ -1,5 +1,7 @@
 // NOTE: Much of this early code is taken from Lazy Foo's SDL tutorials at http://lazyfoo.net/tutorials/SDL/
 
+#include <cstring>
+
 #ifdef WIN32
 #	include <SDL.h>
 #	include <SDL_image.h>
@@ -14,6 +16,8 @@
 #include <cml/cml.h>
 
 #include <csaru-core-cpp/csaru-core-cpp.h>
+#include <csaru-container-cpp/csaru-container-cpp.h>
+#include <csaru-json-cpp/csaru-json-cpp.h>
 #include <csaru-game2dlib-cpp/csaru-game2dlib-cpp.h>
 
 
@@ -117,19 +121,68 @@ bool init () {
 	}
 
 	// Prepare "level"
+	{
+		CSaruJson::JsonParser jsonParser;
+		std::FILE *           levelFile = std::fopen("levels/test.json", "rt");
+		SDL_assert_release(levelFile);
+
+		CSaruContainer::DataMap                 levelDm;
+		CSaruJson::JsonParserCallbackForDataMap levelParserCallback(levelDm.GetMutator());
+
+		if (!jsonParser.ParseEntireFile(
+			levelFile,
+			nullptr /* parser uses its own buffer */,
+			0       /* size of buffer we gave it */,
+			&levelParserCallback
+		)) {
+			SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load level json!\n");
+		}
+
+		CSaruContainer::DataMapReader levelReader = levelDm.GetReader();
+		// root -> data
+		levelReader.ToFirstChild();
+		SDL_assert_release(!std::strcmp(levelReader.ReadName(), "data"));
+		if (!std::strcmp(levelReader.ReadName(), "data")) {
+			CSaruContainer::DataMapReaderSimple simpleReader(levelReader);
+			// data -> array of data objects or first data object
+			simpleReader.ToFirstChild();
+
+			// for each data object
+			for (; simpleReader.IsValid(); simpleReader.ToNextSibling()) {
+				// ignore if it's not a GameObject
+				if (simpleReader.String("type") != "GameObject")
+					continue;
+
+				int id = simpleReader.Int("id");
+
+				simpleReader.ToChild("attributes");
+				simpleReader.ToChild("transform");
+				{
+					simpleReader.ToChild("position");
+					simpleReader.ToFirstChild();
+					CSaruContainer::DataMapReader posReader = simpleReader.GetReader();
+					int x = posReader.ReadIntWalk();
+					int y = posReader.ReadIntWalk();
+					int z = posReader.ReadIntWalk();
+					//SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "pos: |%d, %d, %d|", x, y, z);
+					g_gobs[id]->GetTransform().SetPosition(x, y, z);
+					simpleReader.ToParent();
+					simpleReader.ToParent();
+				}
+				simpleReader.ToParent();
+				simpleReader.ToParent();
+			}
+		}
+	}
 
 	g_gobs[GOB_PLAIN]->AddComponent(new CSaruGame::GocSpriteSimple(1));
-	g_gobs[GOB_PLAIN]->GetTransform().SetPosition(100.0f, 40.0f, 0.0f);
 	// color-mod test
 	g_gobs[GOB_COLOR_MOD]->AddComponent(new CSaruGame::GocSpriteSimple(2));
-	g_gobs[GOB_COLOR_MOD]->GetTransform().SetPosition(228.0f, 40.0f, 0.0f);
 	// rotated test
 	g_gobs[GOB_ROTATED]->AddComponent(new CSaruGame::GocSpriteSimple(3));
-	g_gobs[GOB_ROTATED]->GetTransform().SetPosition(-28.0f, 296.0f, 0.0f);
 	g_gobs[GOB_ROTATED]->GetTransform().SetRotation((45.0f / 180.0f) * M_PI);
 	// rotated-and-flipped test
 	g_gobs[GOB_ROTATED_FLIP]->AddComponent(new CSaruGame::GocSpriteSimple(4));
-	g_gobs[GOB_ROTATED_FLIP]->GetTransform().SetPosition(100.0f, 296.0f, 0.0f);
 	g_gobs[GOB_ROTATED_FLIP]->GetTransform().SetRotation((45.0f / 180.0f) * M_PI);
 	auto a = g_gobs[GOB_ROTATED_FLIP]->GetGoc<CSaruGame::GocSpriteSimple>();
 	SDL_assert_release(a);
@@ -139,7 +192,6 @@ bool init () {
 		CSaruGame::GameObject & gobj = *g_gobs[GOB_ROTATING];
 		gobj.AddComponent(new CSaruGame::GocSpriteSimple(5));
 		gobj.AddComponent(new CSaruGame::GocGobjRotator(1));
-		gobj.GetTransform().SetPosition(228.0f, 296.0f, 0.0f);
 		gobj.GetGoc<CSaruGame::GocSpriteSimple>()->SetFlip(
 			SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL)
 		);
@@ -152,7 +204,6 @@ bool init () {
 		g_gobs[GOB_ANIMATING]->AddComponent(new CSaruGame::GocSpriteSimple(6));
 		g_gobs[GOB_ANIMATING]->AddComponent(new CSaruGame::GocSrcRectAnimator(1));
 
-		g_gobs[GOB_ANIMATING]->GetTransform().SetPosition(-28.0f, 40.0f, 0.0f);
 
 		auto rectAnimator = g_gobs[GOB_ANIMATING]->GetGoc<CSaruGame::GocSrcRectAnimator>();
 		rectAnimator->SetTargetRect(
