@@ -156,8 +156,7 @@ bool init () {
 				int id = simpleReader.Int("id");
 
 				simpleReader.ToChild("attributes");
-				simpleReader.ToChild("transform");
-				{
+				if (simpleReader.ToChild("transform")) {
 					if (simpleReader.EnterArray("position")) {
 					CSaruContainer::DataMapReader posReader = simpleReader.GetReader();
 						int x = posReader.ReadIntWalk();
@@ -172,38 +171,67 @@ bool init () {
 					if (rot != 0.0f) {
 						g_gobs[id]->GetTransform().SetRotation(rot);
 					}
+
+					simpleReader.ToParent();
 				}
+
+				if (simpleReader.ToChild("components")) {
+					if (simpleReader.EnterArray("array")) {
+						while (simpleReader.IsValid()) {
+							// (now on an unnamed component object)
+							if (simpleReader.String("module_name") == "CSaruBase") {
+								std::string typeName = simpleReader.String("type_name");
+								if (typeName == "GocSpriteSimple") {
+									static unsigned s_GocSpriteSimpleId = 1;
+									g_gobs[id]->AddComponent(new CSaruGame::GocSpriteSimple(s_GocSpriteSimpleId++));
+									if (simpleReader.ToChild("properties")) {
+									}
+									else
+										simpleReader.ToParent();
+									simpleReader.ToParent();
+								}
+								else if (typeName == "GocGobjRotator") {
+									static unsigned s_GocGobjRotatorId = 1;
+									g_gobs[id]->AddComponent(new CSaruGame::GocGobjRotator(s_GocGobjRotatorId++));
+									if (simpleReader.ToChild("properties")) {
+										auto goc = g_gobs[id]->GetGoc<CSaruGame::GocGobjRotator>();
+										goc->SetRadiansPerSecond(simpleReader.Float("rads_per_sec", 10.0f));
+									}
+									else
+										simpleReader.ToParent();
+									simpleReader.ToParent();
+								}
+							}
+
+							simpleReader.ToNextSibling();
+						}
+						simpleReader.ExitArray();
+					}
+					else
+						simpleReader.ToParent();
+				}
+				else
+					simpleReader.ToParent();
 				simpleReader.ToParent();
+
 				simpleReader.ToParent();
 			}
 		}
 	}
 
-	g_gobs[GOB_PLAIN]->AddComponent(new CSaruGame::GocSpriteSimple(1));
-	// color-mod test
-	g_gobs[GOB_COLOR_MOD]->AddComponent(new CSaruGame::GocSpriteSimple(2));
-	// rotated test
-	g_gobs[GOB_ROTATED]->AddComponent(new CSaruGame::GocSpriteSimple(3));
 	// rotated-and-flipped test
-	g_gobs[GOB_ROTATED_FLIP]->AddComponent(new CSaruGame::GocSpriteSimple(4));
 	auto a = g_gobs[GOB_ROTATED_FLIP]->GetGoc<CSaruGame::GocSpriteSimple>();
 	SDL_assert_release(a);
 	a->SetFlip(SDL_FLIP_HORIZONTAL);
 	// rotating
 	{
 		CSaruGame::GameObject & gobj = *g_gobs[GOB_ROTATING];
-		gobj.AddComponent(new CSaruGame::GocSpriteSimple(5));
-		gobj.AddComponent(new CSaruGame::GocGobjRotator(1));
 		gobj.GetGoc<CSaruGame::GocSpriteSimple>()->SetFlip(
 			SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL)
-		);
-		gobj.GetGoc<CSaruGame::GocGobjRotator>()->SetRadiansPerSecond(
-			(60.0f * M_PI) / 180.0f
 		);
 	}
 	// animating
 	{
-		g_gobs[GOB_ANIMATING]->AddComponent(new CSaruGame::GocSpriteSimple(6));
 		g_gobs[GOB_ANIMATING]->AddComponent(new CSaruGame::GocSrcRectAnimator(1));
 
 

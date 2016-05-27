@@ -28,6 +28,19 @@
 			"attributes": {
 				"transform": {
 					"position": [228, 40, 0]
+				},
+				"components": {
+					"array": [
+						{
+							"module_name": "CSaruBase",
+							"type_name": "GocSpriteSimple",
+							"properties": {
+								"texture": "kenney/platformer_redux/spritesheet_players.png",
+								"src_rect": [512, 1280, 128, 256],
+								"flip": "none"
+							}
+						}
+					]
 				}
 			}
 		},
@@ -38,6 +51,19 @@
 				"transform": {
 					"position": [-28, 296, 0],
 					"rotation": 0.785398163
+				},
+				"components": {
+					"array": [
+						{
+							"module_name": "CSaruBase",
+							"type_name": "GocSpriteSimple",
+							"properties": {
+								"texture": "kenney/platformer_redux/spritesheet_players.png",
+								"src_rect": [512, 1280, 128, 256],
+								"flip": "none"
+							}
+						}
+					]
 				}
 			}
 		},
@@ -48,6 +74,19 @@
 				"transform": {
 					"position": [100, 296, 0],
 					"rotation": 0.785398163
+				},
+				"components": {
+					"array": [
+						{
+							"module_name": "CSaruBase",
+							"type_name": "GocSpriteSimple",
+							"properties": {
+								"texture": "kenney/platformer_redux/spritesheet_players.png",
+								"src_rect": [512, 1280, 128, 256],
+								"flip": "horizontal"
+							}
+						}
+					]
 				}
 			}
 		},
@@ -57,6 +96,26 @@
 			"attributes": {
 				"transform": {
 					"position": [228, 296, 0]
+				},
+				"components": {
+					"array": [
+						{
+							"module_name": "CSaruBase",
+							"type_name": "GocSpriteSimple",
+							"properties": {
+								"texture": "kenney/platformer_redux/spritesheet_players.png",
+								"src_rect": [512, 1280, 128, 256],
+								"flip": "horizontal,vertical"
+							}
+						},
+						{
+							"module_name": "CSaruBase",
+							"type_name": "GocGobjRotator",
+							"properties": {
+								"rads_per_sec": 1.047197551
+							}
+						}
+					]
 				}
 			}
 		},
@@ -66,6 +125,19 @@
 			"attributes": {
 				"transform": {
 					"position": [-28, 40, 0]
+				},
+				"components": {
+					"array": [
+						{
+							"module_name": "CSaruBase",
+							"type_name": "GocSpriteSimple",
+							"properties": {
+								"texture": "kenney/platformer_redux/spritesheet_players.png",
+								"src_rect": [512, 1280, 128, 256],
+								"flip": "none"
+							}
+						}
+					]
 				}
 			}
 		}
