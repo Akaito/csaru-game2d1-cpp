@@ -158,16 +158,20 @@ bool init () {
 				simpleReader.ToChild("attributes");
 				simpleReader.ToChild("transform");
 				{
-					simpleReader.ToChild("position");
-					simpleReader.ToFirstChild();
+					if (simpleReader.EnterArray("position")) {
 					CSaruContainer::DataMapReader posReader = simpleReader.GetReader();
-					int x = posReader.ReadIntWalk();
-					int y = posReader.ReadIntWalk();
-					int z = posReader.ReadIntWalk();
-					//SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "pos: |%d, %d, %d|", x, y, z);
-					g_gobs[id]->GetTransform().SetPosition(x, y, z);
-					simpleReader.ToParent();
-					simpleReader.ToParent();
+						int x = posReader.ReadIntWalk();
+						int y = posReader.ReadIntWalk();
+						int z = posReader.ReadIntWalk();
+						//SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "pos: |%d, %d, %d|", x, y, z);
+						g_gobs[id]->GetTransform().SetPosition(x, y, z);
+						simpleReader.ExitArray();
+					}
+
+					float rot = simpleReader.Float("rotation", 0.0f);
+					if (rot != 0.0f) {
+						g_gobs[id]->GetTransform().SetRotation(rot);
+					}
 				}
 				simpleReader.ToParent();
 				simpleReader.ToParent();
@@ -180,10 +184,8 @@ bool init () {
 	g_gobs[GOB_COLOR_MOD]->AddComponent(new CSaruGame::GocSpriteSimple(2));
 	// rotated test
 	g_gobs[GOB_ROTATED]->AddComponent(new CSaruGame::GocSpriteSimple(3));
-	g_gobs[GOB_ROTATED]->GetTransform().SetRotation((45.0f / 180.0f) * M_PI);
 	// rotated-and-flipped test
 	g_gobs[GOB_ROTATED_FLIP]->AddComponent(new CSaruGame::GocSpriteSimple(4));
-	g_gobs[GOB_ROTATED_FLIP]->GetTransform().SetRotation((45.0f / 180.0f) * M_PI);
 	auto a = g_gobs[GOB_ROTATED_FLIP]->GetGoc<CSaruGame::GocSpriteSimple>();
 	SDL_assert_release(a);
 	a->SetFlip(SDL_FLIP_HORIZONTAL);
