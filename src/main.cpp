@@ -213,6 +213,23 @@ bool init () {
 											else
 												goc->SetFlip(SDL_FLIP_NONE);
 										}
+
+										/*
+										// color
+										// (to be moved to post-create load section)
+										{
+											if (simpleReader.EnterArray("color")) {
+												CSaruContainer::DataMapReader posReader = simpleReader.GetReader();
+												int r = posReader.ReadIntWalk();
+												int g = posReader.ReadIntWalk();
+												int b = posReader.ReadIntWalk();
+												goc->GetSrcRect() = SDL_Rect{x, y, w, h};
+												simpleReader.ExitArray();
+											}
+											else
+												simpleReader.ToParent();
+										}
+										*/
 									}
 									else
 										simpleReader.ToParent();
@@ -288,7 +305,6 @@ bool loadMedia () {
 		SDL_assert_release(spriteGoc);
 		if (!spriteGoc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
 			return false;
-		//spriteGoc->GetSrcRect() = SDL_Rect{ 512, 1280, 128, 256 };
 
 		switch (i) {
 			case GOB_COLOR_MOD: {

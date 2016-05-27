@@ -34,10 +34,12 @@
 						{
 							"module_name": "CSaruBase",
 							"type_name": "GocSpriteSimple",
+							"TODO": "Move properties to related object. First pass creates, second pass loads.",
 							"properties": {
 								"texture": "kenney/platformer_redux/spritesheet_players.png",
 								"src_rect": [512, 1280, 128, 256],
-								"flip": "none"
+								"flip": "none",
+								"color": [255, 0, 0]
 							}
 						}
 					]
