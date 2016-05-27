@@ -185,6 +185,19 @@ bool init () {
 									static unsigned s_GocSpriteSimpleId = 1;
 									g_gobs[id]->AddComponent(new CSaruGame::GocSpriteSimple(s_GocSpriteSimpleId++));
 									if (simpleReader.ToChild("properties")) {
+										auto goc = g_gobs[id]->GetGoc<CSaruGame::GocSpriteSimple>();
+										// flip
+										{
+											std::string flip = simpleReader.String("flip", "none");
+											if (flip == "horizontal")
+												goc->SetFlip(SDL_FLIP_HORIZONTAL);
+											else if (flip == "vertical")
+												goc->SetFlip(SDL_FLIP_VERTICAL);
+											else if (flip == "horizontal,vertical")
+												goc->SetFlip(SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL));
+											else
+												goc->SetFlip(SDL_FLIP_NONE);
+										}
 									}
 									else
 										simpleReader.ToParent();
@@ -219,17 +232,6 @@ bool init () {
 		}
 	}
 
-	// rotated-and-flipped test
-	auto a = g_gobs[GOB_ROTATED_FLIP]->GetGoc<CSaruGame::GocSpriteSimple>();
-	SDL_assert_release(a);
-	a->SetFlip(SDL_FLIP_HORIZONTAL);
-	// rotating
-	{
-		CSaruGame::GameObject & gobj = *g_gobs[GOB_ROTATING];
-		gobj.GetGoc<CSaruGame::GocSpriteSimple>()->SetFlip(
-			SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL)
-		);
-	}
 	// animating
 	{
 		g_gobs[GOB_ANIMATING]->AddComponent(new CSaruGame::GocSrcRectAnimator(1));
