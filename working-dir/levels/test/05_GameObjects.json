@@ -1,0 +1,61 @@
+{
+	"data": [
+		{
+			"type": "GameObject",
+			"id": 0,
+			"attributes": {
+				"transform": {
+					"position": [100, 40, 0]
+				}
+			}
+		},
+		{
+			"type": "GameObject",
+			"id": 1,
+			"attributes": {
+				"transform": {
+					"position": [228, 40, 0]
+				}
+			}
+		},
+		{
+			"type": "GameObject",
+			"id": 2,
+			"attributes": {
+				"transform": {
+					"position": [-28, 296, 0],
+					"rotation": 0.785398163
+				}
+			}
+		},
+		{
+			"type": "GameObject",
+			"id": 3,
+			"attributes": {
+				"transform": {
+					"position": [100, 296, 0],
+					"rotation": 0.785398163
+				}
+			}
+		},
+		{
+			"type": "GameObject",
+			"id": 4,
+			"attributes": {
+				"transform": {
+					"position": [228, 296, 0]
+				}
+			}
+		},
+		{
+			"type": "GameObject",
+			"id": 5,
+			"attributes": {
+				"transform": {
+					"position": [-28, 40, 0]
+				}
+			}
+		}
+	]
+}
+

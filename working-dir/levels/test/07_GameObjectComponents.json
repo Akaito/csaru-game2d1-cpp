@@ -1,0 +1,98 @@
+{
+	"data": [
+		{
+			"type": "CSaruBase/GocSpriteSimple",
+			"id": 1,
+			"attributes": {
+				"texture": "kenney/platformer_redux/spritesheet_players.png",
+				"src_rect": [512, 1280, 128, 256]
+			},
+			"relationships": {
+				"owner": {
+					"data": { "type": "GameObject", "id": 0 }
+				}
+			}
+		},
+		{
+			"type": "CSaruBase/GocSpriteSimple",
+			"id": 2,
+			"attributes": {
+				"texture": "kenney/platformer_redux/spritesheet_players.png",
+				"src_rect": [512, 1280, 128, 256],
+				"color": [255, 0, 0]
+			},
+			"relationships": {
+				"owner": {
+					"data": { "type": "GameObject", "id": 1 }
+				}
+			}
+		},
+		{
+			"type": "CSaruBase/GocSpriteSimple",
+			"id": 3,
+			"attributes": {
+				"texture": "kenney/platformer_redux/spritesheet_players.png",
+				"src_rect": [512, 1280, 128, 256]
+			},
+			"relationships": {
+				"owner": {
+					"data": { "type": "GameObject", "id": 2 }
+				}
+			}
+		},
+		{
+			"type": "CSaruBase/GocSpriteSimple",
+			"id": 4,
+			"attributes": {
+				"texture": "kenney/platformer_redux/spritesheet_players.png",
+				"src_rect": [512, 1280, 128, 256],
+				"flip": "horizontal"
+			},
+			"relationships": {
+				"owner": {
+					"data": { "type": "GameObject", "id": 3 }
+				}
+			}
+		},
+		{
+			"type": "CSaruBase/GocSpriteSimple",
+			"id": 5,
+			"attributes": {
+				"texture": "kenney/platformer_redux/spritesheet_players.png",
+				"src_rect": [512, 1280, 128, 256],
+				"flip": "horizontal,vertical"
+			},
+			"relationships": {
+				"owner": {
+					"data": { "type": "GameObject", "id": 4 }
+				}
+			}
+		},
+		{
+			"type": "CSaruBase/GocGobjRotator",
+			"id": 1,
+			"attributes": {
+				"rads_per_sec": 1.047197551
+			},
+			"relationships": {
+				"owner": {
+					"data": { "type": "GameObject", "id": 4 }
+				}
+			}
+		},
+		{
+			"type": "CSaruBase/GocSpriteSimple",
+			"id": 6,
+			"attributes": {
+				"texture": "kenney/platformer_redux/spritesheet_players.png",
+				"src_rect": [512, 1280, 128, 256]
+			},
+			"relationships": {
+				"owner": {
+					"data": { "type": "GameObject", "id": 5 }
+				}
+			}
+		}
+	]
+}
+

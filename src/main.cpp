@@ -63,80 +63,23 @@ static SDL_Rect s_viewportRects[] = {
 };
 
 
-bool init () {
+void LoadLevelStuff (const char * filepath) {
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to initialize.  %s\n", SDL_GetError());
-        return false;
-    }
+	CSaruJson::JsonParser jsonParser;
+	std::FILE *           levelFile = std::fopen(filepath, "rt");
+	SDL_assert_release(levelFile);
 
-	g_timer.UpdateFrequency();
-	g_timer.Reset();
-	g_timer.SetPaused(false);
+	CSaruContainer::DataMap                 levelDm;
+	CSaruJson::JsonParserCallbackForDataMap levelParserCallback(levelDm.GetMutator());
 
-	// Create main window.
-    g_window = SDL_CreateWindow(
-        "game2d1",
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
-        s_screenWidth,
-        s_screenHeight,
-        SDL_WINDOW_SHOWN
-    );
-    if (!g_window) {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to create a window.  %s\n", SDL_GetError());
-        return false;
-    }
-
-	// Create renderer for main window.
-	g_renderer = SDL_CreateRenderer(
-		g_window,
-		-1 /* rendering driver index; -1 use first available renderer */,
-		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-	);
-	if (!g_renderer) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to create renderer.  %s\n", SDL_GetError());
-		return false;
+	if (!jsonParser.ParseEntireFile(
+		levelFile,
+		nullptr /* parser uses its own buffer */,
+		0       /* size of buffer we gave it */,
+		&levelParserCallback
+	)) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load level json!\n");
 	}
-
-	// Set color used when clearing.
-	SDL_SetRenderDrawColor(g_renderer, 0x3F, 0x00, 0x3F, 0xFF);
-
-	// Initialize SDL_image extension.
-	int imgFlags = IMG_INIT_PNG;
-	if (!(IMG_Init(imgFlags) & imgFlags)) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_image failed to initialize.  %s\n", IMG_GetError());
-		return false;
-	}
-
-	// Initialize SDL_ttf
-	if (TTF_Init() == -1) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_ttf could not initialize!  %s\n", TTF_GetError());
-		return false;
-	}
-
-	// Prepare gobs
-	for (unsigned i = 0; i < GOBS; ++i) {
-		g_gobs[i] = new CSaruGame::GameObject;
-	}
-
-	// Prepare "level"
-	{
-		CSaruJson::JsonParser jsonParser;
-		std::FILE *           levelFile = std::fopen("levels/test.json", "rt");
-		SDL_assert_release(levelFile);
-
-		CSaruContainer::DataMap                 levelDm;
-		CSaruJson::JsonParserCallbackForDataMap levelParserCallback(levelDm.GetMutator());
-
-		if (!jsonParser.ParseEntireFile(
-			levelFile,
-			nullptr /* parser uses its own buffer */,
-			0       /* size of buffer we gave it */,
-			&levelParserCallback
-		)) {
-			SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load level json!\n");
-		}
 
 		CSaruContainer::DataMapReader levelReader = levelDm.GetReader();
 		// root -> data
@@ -175,6 +118,14 @@ bool init () {
 					simpleReader.ToParent();
 				}
 
+				simpleReader.ToParent();
+
+				simpleReader.ToParent();
+			}
+		}
+
+
+#if 0
 				if (simpleReader.ToChild("components")) {
 					if (simpleReader.EnterArray("array")) {
 						while (simpleReader.IsValid()) {
@@ -257,12 +208,74 @@ bool init () {
 				}
 				else
 					simpleReader.ToParent();
-				simpleReader.ToParent();
 
-				simpleReader.ToParent();
-			}
-		}
+#endif
+
+
+
+}
+
+
+bool init () {
+
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to initialize.  %s\n", SDL_GetError());
+        return false;
+    }
+
+	g_timer.UpdateFrequency();
+	g_timer.Reset();
+	g_timer.SetPaused(false);
+
+	// Create main window.
+    g_window = SDL_CreateWindow(
+        "game2d1",
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        s_screenWidth,
+        s_screenHeight,
+        SDL_WINDOW_SHOWN
+    );
+    if (!g_window) {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to create a window.  %s\n", SDL_GetError());
+        return false;
+    }
+
+	// Create renderer for main window.
+	g_renderer = SDL_CreateRenderer(
+		g_window,
+		-1 /* rendering driver index; -1 use first available renderer */,
+		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+	);
+	if (!g_renderer) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to create renderer.  %s\n", SDL_GetError());
+		return false;
 	}
+
+	// Set color used when clearing.
+	SDL_SetRenderDrawColor(g_renderer, 0x3F, 0x00, 0x3F, 0xFF);
+
+	// Initialize SDL_image extension.
+	int imgFlags = IMG_INIT_PNG;
+	if (!(IMG_Init(imgFlags) & imgFlags)) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_image failed to initialize.  %s\n", IMG_GetError());
+		return false;
+	}
+
+	// Initialize SDL_ttf
+	if (TTF_Init() == -1) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_ttf could not initialize!  %s\n", TTF_GetError());
+		return false;
+	}
+
+	// Prepare gobs
+	for (unsigned i = 0; i < GOBS; ++i) {
+		g_gobs[i] = new CSaruGame::GameObject;
+	}
+
+	// Prepare "level"
+	LoadLevelStuff("levels/test/05_GameObjects.json");
+	LoadLevelStuff("levels/test/07_GameObjectComponents.json");
 
 	// animating
 	{
