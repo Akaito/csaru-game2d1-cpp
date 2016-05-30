@@ -63,8 +63,123 @@ static SDL_Rect s_viewportRects[] = {
 };
 
 
-void LoadLevelStuff (const char * filepath) {
+void LoadLevelStuffGameObject (CSaruContainer::DataMapReaderSimple simpleReader) {
+	int id = simpleReader.Int("id");
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "id: %d", id);
 
+	simpleReader.ToChild("attributes");
+	if (simpleReader.ToChild("transform")) {
+		if (simpleReader.EnterArray("position")) {
+			CSaruContainer::DataMapReader posReader = simpleReader.GetReader();
+			int x = posReader.ReadIntWalk();
+			int y = posReader.ReadIntWalk();
+			int z = posReader.ReadIntWalk();
+			SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "pos: |%d, %d, %d|", x, y, z);
+			g_gobs[id]->GetTransform().SetPosition(x, y, z);
+			simpleReader.ExitArray();
+		}
+
+		float rot = simpleReader.Float("rotation", 0.0f);
+		if (rot != 0.0f) {
+			g_gobs[id]->GetTransform().SetRotation(rot);
+		}
+
+		simpleReader.ToParent();
+	}
+}
+
+void LoadLevelStuffComponent (CSaruContainer::DataMapReaderSimple simpleReader) {
+
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "type: %s", simpleReader.String("type").c_str());
+
+#if 0
+	if (simpleReader.ToChild("components")) {
+		if (simpleReader.EnterArray("array")) {
+			while (simpleReader.IsValid()) {
+				// (now on an unnamed component object)
+				if (simpleReader.String("module_name") == "CSaruBase") {
+					std::string typeName = simpleReader.String("type_name");
+					if (typeName == "GocSpriteSimple") {
+						static unsigned s_GocSpriteSimpleId = 1;
+						g_gobs[id]->AddComponent(new CSaruGame::GocSpriteSimple(s_GocSpriteSimpleId++));
+						if (simpleReader.ToChild("properties")) {
+							auto goc = g_gobs[id]->GetGoc<CSaruGame::GocSpriteSimple>();
+							// src_rect
+							{
+								if (simpleReader.EnterArray("src_rect")) {
+									CSaruContainer::DataMapReader posReader = simpleReader.GetReader();
+									int x = posReader.ReadIntWalk();
+									int y = posReader.ReadIntWalk();
+									int w = posReader.ReadIntWalk();
+									int h = posReader.ReadIntWalk();
+									goc->GetSrcRect() = SDL_Rect{x, y, w, h};
+									simpleReader.ExitArray();
+								}
+								else
+									simpleReader.ToParent();
+							}
+
+							// flip
+							{
+								std::string flip = simpleReader.String("flip", "none");
+								if (flip == "horizontal")
+									goc->SetFlip(SDL_FLIP_HORIZONTAL);
+								else if (flip == "vertical")
+									goc->SetFlip(SDL_FLIP_VERTICAL);
+								else if (flip == "horizontal,vertical")
+									goc->SetFlip(SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL));
+								else
+									goc->SetFlip(SDL_FLIP_NONE);
+							}
+
+							/*
+							// color
+							// (to be moved to post-create load section)
+							{
+								if (simpleReader.EnterArray("color")) {
+									CSaruContainer::DataMapReader posReader = simpleReader.GetReader();
+									int r = posReader.ReadIntWalk();
+									int g = posReader.ReadIntWalk();
+									int b = posReader.ReadIntWalk();
+									goc->GetSrcRect() = SDL_Rect{x, y, w, h};
+									simpleReader.ExitArray();
+								}
+								else
+									simpleReader.ToParent();
+							}
+							*/
+						}
+						else
+							simpleReader.ToParent();
+						simpleReader.ToParent();
+					}
+					else if (typeName == "GocGobjRotator") {
+						static unsigned s_GocGobjRotatorId = 1;
+						g_gobs[id]->AddComponent(new CSaruGame::GocGobjRotator(s_GocGobjRotatorId++));
+						if (simpleReader.ToChild("properties")) {
+							auto goc = g_gobs[id]->GetGoc<CSaruGame::GocGobjRotator>();
+							goc->SetRadiansPerSecond(simpleReader.Float("rads_per_sec", 10.0f));
+						}
+						else
+							simpleReader.ToParent();
+						simpleReader.ToParent();
+					}
+				}
+
+				simpleReader.ToNextSibling();
+			}
+			simpleReader.ExitArray();
+		}
+		else
+			simpleReader.ToParent();
+	}
+	else
+		simpleReader.ToParent();
+#endif
+}
+
+
+void LoadLevelStuff (const char * filepath) {
 	CSaruJson::JsonParser jsonParser;
 	std::FILE *           levelFile = std::fopen(filepath, "rt");
 	SDL_assert_release(levelFile);
@@ -81,138 +196,24 @@ void LoadLevelStuff (const char * filepath) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load level json!\n");
 	}
 
-		CSaruContainer::DataMapReader levelReader = levelDm.GetReader();
-		// root -> data
-		levelReader.ToFirstChild();
-		SDL_assert_release(!std::strcmp(levelReader.ReadName(), "data"));
-		if (!std::strcmp(levelReader.ReadName(), "data")) {
-			CSaruContainer::DataMapReaderSimple simpleReader(levelReader);
-			// data -> array of data objects or first data object
-			simpleReader.ToFirstChild();
+	CSaruContainer::DataMapReader levelReader = levelDm.GetReader();
+	// root -> data
+	levelReader.ToFirstChild();
+	SDL_assert_release(!std::strcmp(levelReader.ReadName(), "data"));
+	if (!std::strcmp(levelReader.ReadName(), "data")) {
+		CSaruContainer::DataMapReaderSimple simpleReader(levelReader);
+		// data -> array of data objects or first data object
+		simpleReader.ToFirstChild();
 
-			// for each data object
-			for (; simpleReader.IsValid(); simpleReader.ToNextSibling()) {
-				// ignore if it's not a GameObject
-				if (simpleReader.String("type") != "GameObject")
-					continue;
-
-				int id = simpleReader.Int("id");
-
-				simpleReader.ToChild("attributes");
-				if (simpleReader.ToChild("transform")) {
-					if (simpleReader.EnterArray("position")) {
-						CSaruContainer::DataMapReader posReader = simpleReader.GetReader();
-						int x = posReader.ReadIntWalk();
-						int y = posReader.ReadIntWalk();
-						int z = posReader.ReadIntWalk();
-						//SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "pos: |%d, %d, %d|", x, y, z);
-						g_gobs[id]->GetTransform().SetPosition(x, y, z);
-						simpleReader.ExitArray();
-					}
-
-					float rot = simpleReader.Float("rotation", 0.0f);
-					if (rot != 0.0f) {
-						g_gobs[id]->GetTransform().SetRotation(rot);
-					}
-
-					simpleReader.ToParent();
-				}
-
-				simpleReader.ToParent();
-
-				simpleReader.ToParent();
-			}
+		// for each data object
+		for (; simpleReader.IsValid(); simpleReader.ToNextSibling()) {
+			// ignore if it's not a GameObject
+			if (simpleReader.String("type") == "GameObject")
+				LoadLevelStuffGameObject(simpleReader);
+			else
+				LoadLevelStuffComponent(simpleReader);
 		}
-
-
-#if 0
-				if (simpleReader.ToChild("components")) {
-					if (simpleReader.EnterArray("array")) {
-						while (simpleReader.IsValid()) {
-							// (now on an unnamed component object)
-							if (simpleReader.String("module_name") == "CSaruBase") {
-								std::string typeName = simpleReader.String("type_name");
-								if (typeName == "GocSpriteSimple") {
-									static unsigned s_GocSpriteSimpleId = 1;
-									g_gobs[id]->AddComponent(new CSaruGame::GocSpriteSimple(s_GocSpriteSimpleId++));
-									if (simpleReader.ToChild("properties")) {
-										auto goc = g_gobs[id]->GetGoc<CSaruGame::GocSpriteSimple>();
-										// src_rect
-										{
-											if (simpleReader.EnterArray("src_rect")) {
-												CSaruContainer::DataMapReader posReader = simpleReader.GetReader();
-												int x = posReader.ReadIntWalk();
-												int y = posReader.ReadIntWalk();
-												int w = posReader.ReadIntWalk();
-												int h = posReader.ReadIntWalk();
-												goc->GetSrcRect() = SDL_Rect{x, y, w, h};
-												simpleReader.ExitArray();
-											}
-											else
-												simpleReader.ToParent();
-										}
-
-										// flip
-										{
-											std::string flip = simpleReader.String("flip", "none");
-											if (flip == "horizontal")
-												goc->SetFlip(SDL_FLIP_HORIZONTAL);
-											else if (flip == "vertical")
-												goc->SetFlip(SDL_FLIP_VERTICAL);
-											else if (flip == "horizontal,vertical")
-												goc->SetFlip(SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL));
-											else
-												goc->SetFlip(SDL_FLIP_NONE);
-										}
-
-										/*
-										// color
-										// (to be moved to post-create load section)
-										{
-											if (simpleReader.EnterArray("color")) {
-												CSaruContainer::DataMapReader posReader = simpleReader.GetReader();
-												int r = posReader.ReadIntWalk();
-												int g = posReader.ReadIntWalk();
-												int b = posReader.ReadIntWalk();
-												goc->GetSrcRect() = SDL_Rect{x, y, w, h};
-												simpleReader.ExitArray();
-											}
-											else
-												simpleReader.ToParent();
-										}
-										*/
-									}
-									else
-										simpleReader.ToParent();
-									simpleReader.ToParent();
-								}
-								else if (typeName == "GocGobjRotator") {
-									static unsigned s_GocGobjRotatorId = 1;
-									g_gobs[id]->AddComponent(new CSaruGame::GocGobjRotator(s_GocGobjRotatorId++));
-									if (simpleReader.ToChild("properties")) {
-										auto goc = g_gobs[id]->GetGoc<CSaruGame::GocGobjRotator>();
-										goc->SetRadiansPerSecond(simpleReader.Float("rads_per_sec", 10.0f));
-									}
-									else
-										simpleReader.ToParent();
-									simpleReader.ToParent();
-								}
-							}
-
-							simpleReader.ToNextSibling();
-						}
-						simpleReader.ExitArray();
-					}
-					else
-						simpleReader.ToParent();
-				}
-				else
-					simpleReader.ToParent();
-
-#endif
-
-
-
+	}
 }
 
 
