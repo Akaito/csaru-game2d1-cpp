@@ -241,7 +241,7 @@ bool init (const char * argv0) {
 	// Setup PhysicsFS
 	{
 		const int physicsFsInitResult = PHYSFS_init(argv0);
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, argv0);
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "argv0: %s", argv0);
 		if (!physicsFsInitResult) {
 			SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, PHYSFS_getLastError());
 			SDL_assert_release(physicsFsInitResult);
@@ -259,12 +259,12 @@ bool init (const char * argv0) {
 			SDL_assert_release(physicsFsConfigResult);
 		}
 
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, PHYSFS_getBaseDir());
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, PHYSFS_getUserDir());
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Base Dir: %s", PHYSFS_getBaseDir());
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "User Dir: %s", PHYSFS_getUserDir());
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Write Dir: %s", PHYSFS_getWriteDir());
 
-		//PHYSFS_addToSearchPath("working-dir", 1);
 		SDL_assert_release(PHYSFS_exists("testImage.png"));
-		SDL_assert_release(PHYSFS_exists("bogus"));
+		//SDL_assert_release(PHYSFS_exists("bogus"));
 	}
 
 	// Create main window.
