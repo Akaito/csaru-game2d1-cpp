@@ -13,6 +13,8 @@
 #	include <SDL2/SDL_ttf.h>
 #endif
 
+#include <physfs.h>
+
 #include <cml/cml.h>
 
 #include <csaru-core-cpp/csaru-core-cpp.h>
@@ -225,16 +227,45 @@ void LoadLevelStuff (const char * filepath) {
 }
 
 
-bool init () {
+bool init (const char * argv0) {
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to initialize.  %s\n", SDL_GetError());
         return false;
     }
 
-	g_timer.UpdateFrequency();
+	g_timer.UpdateFrequency(); // uses SDL; must come after SDL_Init
 	g_timer.Reset();
 	g_timer.SetPaused(false);
+
+	// Setup PhysicsFS
+	{
+		const int physicsFsInitResult = PHYSFS_init(argv0);
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, argv0);
+		if (!physicsFsInitResult) {
+			SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, PHYSFS_getLastError());
+			SDL_assert_release(physicsFsInitResult);
+		}
+
+		const int physicsFsConfigResult = PHYSFS_setSaneConfig(
+			"codesaru" /* organization */,
+			argv0      /* application name */,
+			"zip"      /* archive extension (case-insensitive) */,
+			0          /* include CD-ROM dirs */,
+			1          /* archives first */
+		);
+		if (!physicsFsConfigResult) {
+			SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, PHYSFS_getLastError());
+			SDL_assert_release(physicsFsConfigResult);
+		}
+
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, PHYSFS_getBaseDir());
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, PHYSFS_getUserDir());
+
+		//PHYSFS_addToSearchPath("working-dir", 1);
+		SDL_assert_release(PHYSFS_exists("testImage.png"));
+		SDL_assert_release(PHYSFS_exists("bogus"));
+	}
 
 	// Create main window.
     g_window = SDL_CreateWindow(
@@ -388,6 +419,10 @@ void close () {
 
 	TTF_Quit();
 	IMG_Quit();
+
+	const int physfsDeinitResult = PHYSFS_deinit();
+	SDL_assert(physfsDeinitResult);
+
     SDL_Quit();
 
 }
@@ -399,7 +434,7 @@ int main (int argc, char ** argv) {
     unused(argv);
 
     // initialize and load
-    if (!init())
+    if (!init(argv[0]))
         return 1;
     if (!loadMedia())
         return 1;

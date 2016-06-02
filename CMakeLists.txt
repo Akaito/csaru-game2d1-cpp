@@ -35,9 +35,18 @@ endif()
 
 set(CMAKE_BUILD_TYPE "Debug")
 
+
+# Find PhysicsFS (by Icculus)
+if (UNIX)
+	include(FindPhysFS REQUIRED)
+	target_link_libraries(${PROJECT_NAME} ${PHYSFS_LIBRARY})
+else()
+	message(SEND_ERROR "Non-*nix platform; PhysicsFS-finding style unknown.")
+endif()
+
+
 # The SDL2-finding code below is from
 # http://stackoverflow.com/questions/23850472/how-to-use-sdl2-and-sdl-image-with-cmake
-
 if (UNIX)
 	include(FindPkgConfig)
 	pkg_search_module(SDL2 REQUIRED sdl2)
@@ -48,5 +57,5 @@ else()
 endif()
 
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})
-target_link_librariES(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
 
