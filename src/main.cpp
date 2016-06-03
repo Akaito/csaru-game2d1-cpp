@@ -191,19 +191,27 @@ void LoadLevelStuffComponent (CSaruContainer::DataMapReaderSimple simpleReader) 
 
 void LoadLevelStuff (const char * filepath) {
 	CSaruJson::JsonParser jsonParser;
-	std::FILE *           levelFile = std::fopen(filepath, "rt");
-	SDL_assert_release(levelFile);
+	PHYSFS_file *         levelFileFs = PHYSFS_openRead(filepath);
+	if (!levelFileFs) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, PHYSFS_getLastError());
+		SDL_assert(levelFileFs);
+		return;
+	}
 
 	CSaruContainer::DataMap                 levelDm;
 	CSaruJson::JsonParserCallbackForDataMap levelParserCallback(levelDm.GetMutator());
 
-	if (!jsonParser.ParseEntireFile(
-		levelFile,
-		nullptr /* parser uses its own buffer */,
-		0       /* size of buffer we gave it */,
-		&levelParserCallback
-	)) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load level json!\n");
+	const std::size_t bufObjCount = CSaruCore::GetSystemPageSize();
+	char *            buf         = new char[bufObjCount];
+	while (!PHYSFS_eof(levelFileFs)) {
+		PHYSFS_sint64 physFsReadResult = PHYSFS_read(
+			levelFileFs,
+			buf,
+			sizeof(char),
+			bufObjCount
+		);
+		// TODO : Handle errors reading file here.
+		jsonParser.ParseBuffer(buf, bufObjCount, &levelParserCallback);
 	}
 
 	CSaruContainer::DataMapReader levelReader = levelDm.GetReader();
@@ -224,6 +232,10 @@ void LoadLevelStuff (const char * filepath) {
 				LoadLevelStuffComponent(simpleReader);
 		}
 	}
+
+	delete [] buf;
+	if (levelFileFs)
+		PHYSFS_close(levelFileFs);
 }
 
 
