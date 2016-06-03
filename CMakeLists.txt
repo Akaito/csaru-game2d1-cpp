@@ -59,3 +59,8 @@ endif()
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
 
+install(DIRECTORY
+	working-dir
+	DESTINATION ~/.codesaru/${PROJECT_NAME}/
+	)
+
