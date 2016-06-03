@@ -210,7 +210,16 @@ void LoadLevelStuff (const char * filepath) {
 			sizeof(char),
 			bufObjCount
 		);
-		// TODO : Handle errors reading file here.
+		// Handle errors reading file.
+		if (physFsReadResult < bufObjCount && !PHYSFS_eof(levelFileFs)) {
+			SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, PHYSFS_getLastError());
+			SDL_assert_release(physFsReadResult);
+
+			delete [] buf;
+			PHYSFS_close(levelFileFs);
+			return;
+		}
+
 		jsonParser.ParseBuffer(buf, bufObjCount, &levelParserCallback);
 	}
 
