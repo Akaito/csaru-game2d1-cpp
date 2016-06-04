@@ -1,7 +1,7 @@
 {
 	"data": [
 		{
-			"type": "CSaruBase/GocSpriteSimple",
+			"type": "CSaruBase_GocSpriteSimple",
 			"id": 1,
 			"attributes": {
 				"texture": "kenney/platformer_redux/spritesheet_players.png",
@@ -14,7 +14,7 @@
 			}
 		},
 		{
-			"type": "CSaruBase/GocSpriteSimple",
+			"type": "CSaruBase_GocSpriteSimple",
 			"id": 2,
 			"attributes": {
 				"texture": "kenney/platformer_redux/spritesheet_players.png",
@@ -28,7 +28,7 @@
 			}
 		},
 		{
-			"type": "CSaruBase/GocSpriteSimple",
+			"type": "CSaruBase_GocSpriteSimple",
 			"id": 3,
 			"attributes": {
 				"texture": "kenney/platformer_redux/spritesheet_players.png",
@@ -41,7 +41,7 @@
 			}
 		},
 		{
-			"type": "CSaruBase/GocSpriteSimple",
+			"type": "CSaruBase_GocSpriteSimple",
 			"id": 4,
 			"attributes": {
 				"texture": "kenney/platformer_redux/spritesheet_players.png",
@@ -55,7 +55,7 @@
 			}
 		},
 		{
-			"type": "CSaruBase/GocSpriteSimple",
+			"type": "CSaruBase_GocSpriteSimple",
 			"id": 5,
 			"attributes": {
 				"texture": "kenney/platformer_redux/spritesheet_players.png",
@@ -69,7 +69,7 @@
 			}
 		},
 		{
-			"type": "CSaruBase/GocGobjRotator",
+			"type": "CSaruBase_GocGobjRotator",
 			"id": 1,
 			"attributes": {
 				"rads_per_sec": 1.047197551
@@ -81,7 +81,7 @@
 			}
 		},
 		{
-			"type": "CSaruBase/GocSpriteSimple",
+			"type": "CSaruBase_GocSpriteSimple",
 			"id": 6,
 			"attributes": {
 				"texture": "kenney/platformer_redux/spritesheet_players.png",

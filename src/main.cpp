@@ -67,7 +67,7 @@ static SDL_Rect s_viewportRects[] = {
 
 void LoadLevelStuff (const char * filepath) {
 	CSaruJson::JsonParser jsonParser;
-	PHYSFS_file *         levelFileFs = PHYSFS_openRead(filepath);
+	PHYSFS_File *         levelFileFs = PHYSFS_openRead(filepath);
 	if (!levelFileFs) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, PHYSFS_getLastError());
 		SDL_assert(levelFileFs);
@@ -195,6 +195,7 @@ bool init (const char * argv0) {
 	}
 
 	// Prepare "level"
+	//LoadLevelStuff("levels/test/03_Assets.json");
 	LoadLevelStuff("levels/test/05_GameObjects.json");
 	LoadLevelStuff("levels/test/07_GameObjectComponents.json");
 
