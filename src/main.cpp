@@ -45,8 +45,7 @@ enum Gobs {
 	GOB_ANIMATING,
 	GOBS
 };
-static CSaruGame::GameObject * g_gobs[GOBS];
-static CSaruGame::Level        g_level;
+static CSaruGame::Level g_level;
 
 static SDL_Rect s_testRects[] = {
     {   0,   0, 128, 128 },
@@ -108,10 +107,8 @@ void LoadLevelStuff (const char * filepath) {
 	if (levelFileFs)
 		PHYSFS_close(levelFileFs);
 
-	// Transitioning away from g_gobs use.
-	for (unsigned i = 0; i < arrsize(g_gobs); ++i) {
-		g_gobs[i] = g_level.GetGameObject(i);
-		SDL_assert(g_gobs[i]);
+	for (unsigned i = 0; i < GOBS; ++i) {
+		SDL_assert_release(g_level.GetGameObject(i));
 	}
 }
 
@@ -197,25 +194,19 @@ bool init (const char * argv0) {
 		return false;
 	}
 
-#if 0
-	// Prepare gobs
-	for (unsigned i = 0; i < GOBS; ++i) {
-		g_gobs[i] = new CSaruGame::GameObject;
-	}
-#endif
-
 	// Prepare "level"
 	LoadLevelStuff("levels/test/05_GameObjects.json");
 	LoadLevelStuff("levels/test/07_GameObjectComponents.json");
 
 	// animating
 	{
-		g_gobs[GOB_ANIMATING]->AddComponent(new CSaruGame::GocSrcRectAnimator(1));
+		CSaruGame::GameObject * gob = g_level.GetGameObject(GOB_ANIMATING);
+		SDL_assert_release(gob);
+		gob->AddComponent(new CSaruGame::GocSrcRectAnimator(1));
 
-
-		auto rectAnimator = g_gobs[GOB_ANIMATING]->GetGoc<CSaruGame::GocSrcRectAnimator>();
+		auto rectAnimator = gob->GetGoc<CSaruGame::GocSrcRectAnimator>();
 		rectAnimator->SetTargetRect(
-			&g_gobs[GOB_ANIMATING]->GetGoc<CSaruGame::GocSpriteSimple>()->GetSrcRect()
+			&gob->GetGoc<CSaruGame::GocSpriteSimple>()->GetSrcRect()
 		);
 		rectAnimator->SetAnimation(&g_yellowAlienWalkAnim);
 	}
@@ -245,7 +236,9 @@ bool loadMedia () {
 
 	// load GocSpriteSimple textures
 	for (unsigned i = GOB_PLAIN; i < GOBS; ++i) {
-		auto * spriteGoc = g_gobs[i]->GetGoc<CSaruGame::GocSpriteSimple>();
+		CSaruGame::GameObject * gob = g_level.GetGameObject(i);
+		SDL_assert_release(gob);
+		auto * spriteGoc = gob->GetGoc<CSaruGame::GocSpriteSimple>();
 		SDL_assert_release(spriteGoc);
 		if (!spriteGoc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
 			return false;
@@ -351,20 +344,20 @@ int main (int argc, char ** argv) {
 
 					case SDLK_p: {
 						for (unsigned i = GOB_PLAIN; i < GOBS; ++i) {
-							auto trans = g_gobs[i]->GetTransform();
+							auto trans = g_level.GetGameObject(i)->GetTransform();
 							SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Pos: %f, %f", trans.GetPosition()[0], trans.GetPosition()[1]);
 						}
 					} break;
 
 					case SDLK_w: {
 						for (unsigned i = GOB_PLAIN; i < GOBS; ++i) {
-							g_gobs[i]->GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0xFF);
+							g_level.GetGameObject(i)->GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0xFF);
 						}
 					} break;
 
 					case SDLK_s: {
 						for (unsigned i = GOB_PLAIN; i < GOBS; ++i) {
-							g_gobs[i]->GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0x7F);
+							g_level.GetGameObject(i)->GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0x7F);
 						}
 					} break;
 
@@ -376,7 +369,7 @@ int main (int argc, char ** argv) {
 		// Update all game objects.
 		const float dt = g_timer.GetMsDelta() / 1000.0f;
 		for (unsigned i = 0; i < GOBS; ++i) {
-			g_gobs[i]->Update(dt);
+			g_level.GetGameObject(i)->Update(dt);
 		}
 
 		// Clear the renderer to prepare for drawing.
@@ -434,7 +427,7 @@ int main (int argc, char ** argv) {
 
 		// Render game objects
 		for (unsigned i = 0; i < GOBS; ++i)
-			g_gobs[i]->Render();
+			g_level.GetGameObject(i)->Render();
 
 		// Test text rendering.
 		g_textTexture.Render(
