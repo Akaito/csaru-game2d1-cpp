@@ -47,7 +47,7 @@ enum Gobs {
 	GOBS
 };
 static CSaruGame::Level g_level;
-static CSaruGame::ObjectDatabaseTable<CSaruGame::GocSpriteSimple> g_db;
+static CSaruGame::ObjectDbTable<CSaruUuid::Uuid, CSaruGame::GocSpriteSimple> g_db;
 
 static SDL_Rect s_testRects[] = {
     {   0,   0, 128, 128 },
@@ -117,10 +117,11 @@ void LoadLevelStuff (const char * filepath) {
 
 bool init (const char * argv0) {
 
-	SDL_assert_release(g_db.CreateNow(CSaruUuid::Uuid{5, 42}));
-	SDL_assert_release(g_db.Find(CSaruGame::FindStyle::FAIL, CSaruUuid::Uuid{5, 42}));
-	SDL_assert_release(g_db.Find(CSaruGame::FindStyle::CREATE_NOW, CSaruUuid::Uuid{8493, 42}));
-	SDL_assert_release(g_db.Find(CSaruGame::FindStyle::FAIL, CSaruUuid::Uuid{8493, 42}));
+	g_db.Init();
+	SDL_assert_release(g_db.CreateNow(CSaruUuid::Uuid{5, 42}).generation);
+	SDL_assert_release(g_db.Find(CSaruGame::FindStyle::FAIL, CSaruUuid::Uuid{5, 42}).generation);
+	SDL_assert_release(g_db.Find(CSaruGame::FindStyle::CREATE_NOW, CSaruUuid::Uuid{8493, 42}).generation);
+	SDL_assert_release(g_db.Find(CSaruGame::FindStyle::FAIL, CSaruUuid::Uuid{8493, 42}).generation);
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to initialize.  %s\n", SDL_GetError());
