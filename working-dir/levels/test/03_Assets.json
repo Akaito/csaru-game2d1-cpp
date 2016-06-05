@@ -1,0 +1,12 @@
+{
+	"data": [
+		{
+			"type": "CSaru2d_Texture",
+			"id": "cb80775f-a199-43ad-8ea2-c7620d38cd96",
+			"attributes": {
+				"path": "kenney/platformer_redux/spritesheet_players.png"
+			}
+		}
+	]
+}
+
