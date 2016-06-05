@@ -246,7 +246,9 @@ bool loadMedia () {
 		SDL_assert_release(gob);
 		auto * spriteGoc = gob->GetGoc<CSaruGame::GocSpriteSimple>();
 		SDL_assert_release(spriteGoc);
-		if (!spriteGoc->LoadTextureFromFile(g_renderer, "kenney/platformer_redux/spritesheet_players.png"))
+		SDL_RWops * rwOps = CSaruGame::AllocRwOpsPhysFs("kenney/platformer_redux/spritesheet_players.png", 'r');
+		SDL_assert_release(rwOps);
+		if (!spriteGoc->LoadTexture(g_renderer, rwOps))
 			return false;
 
 		switch (i) {
