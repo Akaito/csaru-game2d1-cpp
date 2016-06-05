@@ -141,11 +141,11 @@ bool init (const char * argv0) {
 		}
 
 		const int physicsFsConfigResult = PHYSFS_setSaneConfig(
-			"codesaru" /* organization */,
-			argv0      /* application name */,
-			"zip"      /* archive extension (case-insensitive) */,
-			0          /* include CD-ROM dirs */,
-			1          /* archives first */
+			"codesaru"          /* organization */,
+			"csaru-game2d1-cpp" /* application name */,
+			"zip"               /* archive extension (case-insensitive) */,
+			0                   /* include CD-ROM dirs */,
+			1                   /* archives first */
 		);
 		if (!physicsFsConfigResult) {
 			SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, PHYSFS_getLastError());
@@ -242,7 +242,7 @@ bool loadMedia () {
 		SDL_RWops * rwOps = CSaruGame::AllocRwOpsPhysFs("testImage.png", 'r');
 		SDL_assert_release(rwOps);
 		if (!g_bgTexture.Load(g_renderer, rwOps, false, 0x00, 0x00, 0x00)) {
-			SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load bg image!\n");
+			SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load bg image!\n");
 			return false;
 		}
 	}
@@ -255,8 +255,10 @@ bool loadMedia () {
 		SDL_assert_release(spriteGoc);
 		SDL_RWops * rwOps = CSaruGame::AllocRwOpsPhysFs("kenney/platformer_redux/spritesheet_players.png", 'r');
 		SDL_assert_release(rwOps);
-		if (!spriteGoc->LoadTexture(g_renderer, rwOps))
+		if (!spriteGoc->LoadTexture(g_renderer, rwOps)) {
+			SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "GocSpriteSimple failed to load texture. %s", SDL_GetError());
 			return false;
+		}
 
 		switch (i) {
 			case GOB_COLOR_MOD: {
@@ -267,7 +269,8 @@ bool loadMedia () {
 
 	// Open the font
 	{
-		g_font = TTF_OpenFont("ubuntu-font-family/UbuntuMono-B.ttf", 28);
+		SDL_RWops * rwOps = CSaruGame::AllocRwOpsPhysFs("ubuntu-font-family/UbuntuMono-B.ttf", 'r');
+		g_font = TTF_OpenFontRW(rwOps, 1 /* SDL_RWclose for me */, 28);
 		if (!g_font) {
 			SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load ttf font!  SDL_ttf Error: %s\n", TTF_GetError());
 			return false;
@@ -333,10 +336,14 @@ int main (int argc, char ** argv) {
     unused(argv);
 
     // initialize and load
-    if (!init(argv[0]))
+    if (!init(argv[0])) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to init.");
         return 1;
-    if (!loadMedia())
+	}
+    if (!loadMedia()) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to loadMedia. %s", SDL_GetError());
         return 1;
+	}
 
     bool readyToQuit = false;
     SDL_Event e;
