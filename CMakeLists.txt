@@ -25,7 +25,8 @@ CSaru_UseVendor("CML")
 
 CSaru_Depends("csaru-game2dlib-cpp")
 CSaru_Depends("csaru-json-cpp")
-CSaru_Depends("csaru-container-cpp")
+CSaru_Depends("csaru-datamap-cpp")
+CSaru_Depends("csaru-uuid-cpp")
 CSaru_Depends("csaru-core-cpp")
 
 if (UNIX)

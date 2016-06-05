@@ -18,7 +18,8 @@
 #include <cml/cml.h>
 
 #include <csaru-core-cpp/csaru-core-cpp.h>
-#include <csaru-container-cpp/csaru-container-cpp.h>
+#include <csaru-uuid-cpp/csaru-uuid-cpp.h>
+#include <csaru-datamap-cpp/csaru-datamap-cpp.h>
 #include <csaru-json-cpp/csaru-json-cpp.h>
 #include <csaru-game2dlib-cpp/csaru-game2dlib-cpp.h>
 
@@ -46,6 +47,7 @@ enum Gobs {
 	GOBS
 };
 static CSaruGame::Level g_level;
+static CSaruGame::ObjectDatabaseTable<CSaruGame::GocSpriteSimple> g_db;
 
 static SDL_Rect s_testRects[] = {
     {   0,   0, 128, 128 },
@@ -74,7 +76,7 @@ void LoadLevelStuff (const char * filepath) {
 		return;
 	}
 
-	CSaruContainer::DataMap                 levelDm;
+	CSaruDataMap::DataMap                 levelDm;
 	CSaruJson::JsonParserCallbackForDataMap levelParserCallback(levelDm.GetMutator());
 
 	const std::size_t bufObjCount = CSaruCore::GetSystemPageSize();
@@ -100,7 +102,7 @@ void LoadLevelStuff (const char * filepath) {
 	}
 
 	// Load level assets.
-	CSaruContainer::DataMapReader levelReader = levelDm.GetReader();
+	CSaruDataMap::DataMapReader levelReader = levelDm.GetReader();
 	g_level.AcceptDataMap(levelReader);
 
 	delete [] buf;
@@ -114,6 +116,11 @@ void LoadLevelStuff (const char * filepath) {
 
 
 bool init (const char * argv0) {
+
+	SDL_assert_release(g_db.CreateNow(CSaruUuid::Uuid{5, 42}));
+	SDL_assert_release(g_db.Find(CSaruGame::FindStyle::FAIL, CSaruUuid::Uuid{5, 42}));
+	SDL_assert_release(g_db.Find(CSaruGame::FindStyle::CREATE_NOW, CSaruUuid::Uuid{8493, 42}));
+	SDL_assert_release(g_db.Find(CSaruGame::FindStyle::FAIL, CSaruUuid::Uuid{8493, 42}));
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to initialize.  %s\n", SDL_GetError());
