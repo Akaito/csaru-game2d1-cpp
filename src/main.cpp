@@ -230,9 +230,14 @@ bool loadMedia () {
 
 	g_timer.Reset();
 
-	if (!g_bgTexture.LoadFromFile(g_renderer, "testImage.png", false, 0x00, 0x00, 0x00)) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load bg image!\n");
-		return false;
+	// load background texture
+	{
+		SDL_RWops * rwOps = CSaruGame::AllocRwOpsPhysFs("testImage.png", 'r');
+		SDL_assert_release(rwOps);
+		if (!g_bgTexture.Load(g_renderer, rwOps, false, 0x00, 0x00, 0x00)) {
+			SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load bg image!\n");
+			return false;
+		}
 	}
 
 	// load GocSpriteSimple textures
