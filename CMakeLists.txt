@@ -57,6 +57,16 @@ else()
 	message(SEND_ERROR "Non-*nix platform; SDL2-finding style unknown.")
 endif()
 
+# OpenGL
+include(FindOpenGL REQUIRED)
+if (OPENGL_FOUND)
+	include_directories(${OPENGL_INCLUDE_DIR})
+	target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
+else()
+	message(SEND_ERROR "Failed to find OpenGL.")
+endif()
+
+
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
 
