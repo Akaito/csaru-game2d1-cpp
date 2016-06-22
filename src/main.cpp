@@ -6,6 +6,7 @@
 #	include <SDL.h>
 #	include <SDL_image.h>
 #	include <SDL_ttf.h>
+#	include <SDL_opengl.h>
 #	undef main
 #else
 #	include <SDL2/SDL.h>
@@ -163,6 +164,12 @@ bool init (const char * argv0) {
 		//SDL_assert_release(PHYSFS_exists("bogus"));
 	}
 
+	// Prepare some flags before making the main window.
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 0); // 0: force software, 1: force hardware, neither: either
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+
 	// Create main window.
     g_window = SDL_CreateWindow(
         "game2d1",
@@ -177,6 +184,7 @@ bool init (const char * argv0) {
         return false;
     }
 
+	// Prepare OpenGL.
 	g_glContext = SDL_GL_CreateContext(g_window);
 
 	// Create renderer for main window.
