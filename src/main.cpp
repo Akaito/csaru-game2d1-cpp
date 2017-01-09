@@ -199,7 +199,7 @@ bool init (const char * argv0) {
 	}
 
 	// Set color used when clearing.
-	SDL_SetRenderDrawColor(g_renderer, 0x3F, 0x00, 0x3F, 0xFF);
+	SDL_SetRenderDrawColor(g_renderer, 0x3F, 0xff, 0x3F, 0xFF);
 
 	// Initialize SDL_image extension.
 	int imgFlags = IMG_INIT_PNG;
@@ -316,6 +316,15 @@ bool loadMedia () {
 }
 
 
+bool loadShaders () {
+
+
+
+	return true;
+
+}
+
+
 void close () {
 
 	// Free loaded data.
@@ -359,6 +368,10 @@ int main (int argc, char ** argv) {
     if (!loadMedia()) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to loadMedia. %s", SDL_GetError());
         return 1;
+	}
+	if (!loadShaders()) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to loadShaders. %s", SDL_GetError());
+		return 1;
 	}
 
     bool readyToQuit = false;
