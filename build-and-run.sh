@@ -4,6 +4,6 @@
 
 make && cp -r working-dir/* ~/.codesaru/csaru-game2d1-cpp/
 if [ $? -eq 0 ]; then
-	csaru-game2d1-cpp
+	./csaru-game2d1-cpp
 fi
 
