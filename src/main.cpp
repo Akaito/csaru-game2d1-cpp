@@ -19,11 +19,11 @@
 
 #include <cml/cml.h>
 
-#include <csaru-core-cpp/csaru-core-cpp.h>
-#include <csaru-uuid-cpp/csaru-uuid-cpp.h>
-#include <csaru-datamap-cpp/csaru-datamap-cpp.h>
-#include <csaru-json-cpp/csaru-json-cpp.h>
-#include <csaru-game2dlib-cpp/csaru-game2dlib-cpp.h>
+#include <csaru-core-cpp/csaru-core-cpp.hpp>
+#include <csaru-uuid-cpp/csaru-uuid-cpp.hpp>
+#include <csaru-datamap-cpp/csaru-datamap-cpp.hpp>
+#include <csaru-json-cpp/csaru-json-cpp.hpp>
+#include <csaru-game2dlib-cpp/csaru-game2dlib-cpp.hpp>
 
 
 static const int  s_screenWidth       = 1366;

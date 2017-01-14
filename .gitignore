@@ -12,9 +12,10 @@ Release
 *.sdf
 
 # nix
-Makefile
+*.d
+*.o
 *.a
-*.out
+csaru-game2d1-cpp
 
 # CMake
 CMakeFiles
