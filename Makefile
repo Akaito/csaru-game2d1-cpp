@@ -13,7 +13,7 @@ CSARU_DEPENDS = csaru-game2dlib-cpp csaru-json-cpp csaru-datamap-cpp csaru-uuid-
 # up here.
 CXXFLAGS += -I../../pkg/vendor/CML
 
-LIBS_NEEDED := SDL2 SDL2_image SDL2_ttf physfs
+LIBS_NEEDED := SDL2 SDL2_image SDL2_ttf GL physfs
 LDLIBS += $(addprefix -l,$(LIBS_NEEDED))
 
 include ../../makefiles/Makefile-executable
