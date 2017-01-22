@@ -6,6 +6,22 @@
 			"attributes": {
 				"path": "kenney/platformer_redux/spritesheet_players.png"
 			}
+		},
+		{
+			"type": "CSaru2d_TextureAnimation",
+			"id": "5936950a-2fbe-4602-9a00-139a55eff2ad",
+			"attributes": {
+				"frames": [
+					{
+						"ms": 250,
+						"src_rect": [128, 1024, 128, 256]
+					},
+					{
+						"ms": 250,
+						"src_rect": [128, 768, 128, 256]
+					}
+				]
+			}
 		}
 	]
 }
