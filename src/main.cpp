@@ -41,13 +41,6 @@ static SDL_Window *     g_window       = nullptr;
 static SDL_GLContext    g_glContext    = nullptr;
 static SDL_Renderer *   g_renderer     = nullptr;
 
-static SDL_Rect s_viewportRects[] = {
-	{                 0,                  0, s_screenWidth / 2, s_screenHeight / 2 },
-	{ s_screenWidth / 2,                  0, s_screenWidth / 2, s_screenHeight / 2 },
-	{                 0, s_screenHeight / 2, s_screenWidth,     s_screenHeight / 2 },
-};
-
-
 //======================================================================
 bool init (int argc, char * argv[]) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -87,9 +80,9 @@ bool init (int argc, char * argv[]) {
 
 	// Prepare some flags before making the main window.
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 0); // 0: force software, 1: force hardware, neither: either
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
 	// Create main window.
     g_window = SDL_CreateWindow(
