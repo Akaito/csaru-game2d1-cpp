@@ -6,13 +6,11 @@
 #	include <SDL.h>
 #	include <SDL_image.h>
 #	include <SDL_ttf.h>
-#	include <SDL_opengl.h>
 #	undef main
 #else
 #	include <SDL2/SDL.h>
 #	include <SDL2/SDL_image.h>
 #	include <SDL2/SDL_ttf.h>
-#	include <SDL2/SDL_opengl.h>
 #endif
 
 #include <physfs.h>
@@ -38,7 +36,6 @@ static CSaruGame::GameScene * g_scene = nullptr;
 
 static unsigned         g_frameCounter = 0;
 static SDL_Window *     g_window       = nullptr;
-static SDL_GLContext    g_glContext    = nullptr;
 static SDL_Renderer *   g_renderer     = nullptr;
 
 //======================================================================
@@ -78,12 +75,6 @@ bool init (int argc, char * argv[]) {
 		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Write Dir: %s", PHYSFS_getWriteDir());
 	}
 
-	// Prepare some flags before making the main window.
-	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 0); // 0: force software, 1: force hardware, neither: either
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-
 	// Create main window.
     g_window = SDL_CreateWindow(
         "game2d1",
@@ -91,15 +82,12 @@ bool init (int argc, char * argv[]) {
         SDL_WINDOWPOS_CENTERED,
         s_screenWidth,
         s_screenHeight,
-        SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL // | SDL_WINDOW_RESIZABLE
+        SDL_WINDOW_SHOWN // | SDL_WINDOW_RESIZABLE
     );
     if (!g_window) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL failed to create a window.  %s\n", SDL_GetError());
         return false;
     }
-
-	// Prepare OpenGL.
-	g_glContext = SDL_GL_CreateContext(g_window);
 
 	// Create renderer for main window.
 	g_renderer = SDL_CreateRenderer(
@@ -166,9 +154,6 @@ bool loadMedia () {
 void close () {
 	g_scene->Unload();
 
-	// Unload OpenGL.
-	SDL_GL_DeleteContext(g_glContext);
-
 	// Destroy window.
 	SDL_DestroyRenderer(g_renderer);
     SDL_DestroyWindow(g_window);
@@ -214,7 +199,6 @@ int main (int argc, char ** argv) {
 		g_scene->Render(g_renderer, s_screenWidth, s_screenHeight);
 
 		SDL_RenderPresent(g_renderer);
-		SDL_GL_SwapWindow(g_window);
 
 		++g_frameCounter; // Just for debugging.
 		g_timer.Advance();
