@@ -35,6 +35,8 @@ bool SceneAlienTest::Init (int argc, const char * const argv[]) {
 	unused(argc);
 	unused(argv);
 
+	CSaruCore::SecureZero(m_keyboardFrames, sizeof(m_keyboardFrames));
+
 	// Arbitrary ObjectDbTable test
 	m_db.Init();
 	CSaruUuid::Uuid testUuidA{{{5, 42}}};
@@ -146,6 +148,25 @@ void SceneAlienTest::Unload () {
 
 //======================================================================
 void SceneAlienTest::Update (float dtms) {
+	// Update keyboard state.
+	// TODO : SDL docs claim pointer to state is valid for lifetime of application.
+	//        So... are we "leaking" constantly?  Is it the same pointer each time?
+	m_keyboardFrames[1] = m_keyboardFrames[0];
+	m_keyboardFrames[0].keyArray = SDL_GetKeyboardState(&m_keyboardFrames[0].numKeys);
+
+	// ActionGame Algorithm Maniax hacky test
+	{
+		const float velX  = 300.0f * dtms;
+		auto &&     trans = m_level.GetGameObject(GOB_PLAIN)->GetTransform();
+		auto        pos   = trans.GetPosition();
+		if (m_keyboardFrames[0].keyArray[SDL_SCANCODE_A])
+			pos[0] -= velX;
+		if (m_keyboardFrames[0].keyArray[SDL_SCANCODE_D])
+			pos[0] += velX;
+
+		trans.SetPosition(pos);
+	}
+
 	// Update all game objects.
 	for (unsigned i = 0; i < GOBS; ++i) {
 		m_level.GetGameObject(i)->Update(dtms);
@@ -169,13 +190,13 @@ void SceneAlienTest::OnSdlEvent (const SDL_Event & e) {
 				}
 			} break;
 
-			case SDLK_w: {
+			case SDLK_e: {
 				for (unsigned i = GOB_PLAIN; i < GOBS; ++i) {
 					m_level.GetGameObject(i)->GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0xFF);
 				}
 			} break;
 
-			case SDLK_s: {
+			case SDLK_q: {
 				for (unsigned i = GOB_PLAIN; i < GOBS; ++i) {
 					m_level.GetGameObject(i)->GetGoc<CSaruGame::GocSpriteSimple>()->GetTexture()->SetAlpha(0x7F);
 				}
@@ -187,9 +208,7 @@ void SceneAlienTest::OnSdlEvent (const SDL_Event & e) {
 
 //======================================================================
 void SceneAlienTest::Render (SDL_Renderer * renderer, int screenWidth, int screenHeight) {
-	// Clear the renderer to prepare for drawing.
-	glClearColor(0.33f, 0.40f, 0.27f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	SDL_RenderClear(renderer);
 
 	// Render prep
 	SDL_RenderSetViewport(renderer, nullptr);
