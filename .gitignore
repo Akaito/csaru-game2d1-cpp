@@ -3,6 +3,7 @@
 *.swp
 *.swo
 *.vim
+src/tags
 
 # Visual Studio
 Debug

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# run from 'build' dir (mkdir build && cd build && cmake .. && ../run.sh)
+# run from main repo dir
 
-./csaru-game2d1-cpp ../working-dir
+./csaru-game2d1-cpp working-dir
 
