@@ -1,3 +1,5 @@
+#include <cstring> // std::memcpy
+
 #ifdef WIN32
 #	include <SDL.h>
 #	include <SDL_image.h>
@@ -36,6 +38,7 @@ bool SceneAlienTest::Init (int argc, const char * const argv[]) {
 	unused(argv);
 
 	CSaruCore::SecureZero(m_keyboardFrames, sizeof(m_keyboardFrames));
+	//SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "key count: %u", m_keyboardFrames[0].numKeys);
 
 	// Arbitrary ObjectDbTable test
 	m_db.Init();
@@ -151,18 +154,42 @@ void SceneAlienTest::Update (float dtms) {
 	// Update keyboard state.
 	// TODO : SDL docs claim pointer to state is valid for lifetime of application.
 	//        So... are we "leaking" constantly?  Is it the same pointer each time?
-	m_keyboardFrames[1] = m_keyboardFrames[0];
-	m_keyboardFrames[0].keyArray = SDL_GetKeyboardState(&m_keyboardFrames[0].numKeys);
+	std::memcpy(&m_keyboardFrames[1], &m_keyboardFrames[0], sizeof(m_keyboardFrames[0]));
+
+	const uint8_t * sdlKeystate = SDL_GetKeyboardState(nullptr);
+	std::memcpy(&m_keyboardFrames[0].keyArray, sdlKeystate, KeyboardState::s_keyArraySize);
 
 	// ActionGame Algorithm Maniax hacky test
 	{
-		const float velX  = 300.0f * dtms;
-		auto &&     trans = m_level.GetGameObject(GOB_PLAIN)->GetTransform();
-		auto        pos   = trans.GetPosition();
+		const float velX           = 200.0f;
+		const float velSwimUpY     = -250.0f;
+		const float velSinkY       = 100.0f;
+		const float swimUpDuration = 0.6f;
+
+		static float timeSinceButton1Down = swimUpDuration;
+
+		auto &&      trans = m_level.GetGameObject(GOB_PLAIN)->GetTransform();
+		auto         pos   = trans.GetPosition();
+
+		// left
 		if (m_keyboardFrames[0].keyArray[SDL_SCANCODE_A])
-			pos[0] -= velX;
+			pos[0] -= velX * dtms;
+		// right
 		if (m_keyboardFrames[0].keyArray[SDL_SCANCODE_D])
-			pos[0] += velX;
+			pos[0] += velX * dtms;
+		// button 1 (just pressed this frame)
+		if (m_keyboardFrames[0].keyArray[SDL_SCANCODE_F] &&
+				!m_keyboardFrames[1].keyArray[SDL_SCANCODE_F]) {
+			timeSinceButton1Down = 0.0f;
+			//SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "F pressed this frame.");
+		}
+
+		float swimUpStrength = (swimUpDuration - timeSinceButton1Down) / swimUpDuration;
+		float velY = velSinkY + velSwimUpY * swimUpStrength;
+		pos[1] += velY * dtms;
+		timeSinceButton1Down += dtms;
+		if (timeSinceButton1Down > swimUpDuration)
+			timeSinceButton1Down = swimUpDuration;
 
 		trans.SetPosition(pos);
 	}

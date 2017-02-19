@@ -15,8 +15,8 @@ private:
 
 	// TODO : Move to GameScene?
 	struct KeyboardState {
-		const uint8_t * keyArray;
-		int             numKeys;
+		static const int s_keyArraySize = 512;
+		uint8_t          keyArray[s_keyArraySize];
 	};
 	KeyboardState m_keyboardFrames[2]; // current frame (0), and last (1)
 
