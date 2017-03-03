@@ -116,7 +116,7 @@ bool init (int argc, char * argv[]) {
 		return false;
 	}
 
-	g_scene = new SceneAlienTest;
+	SDL_assert(g_scene);
 	g_scene->Init(argc, argv);
 
 	// perf/timer testing
@@ -175,6 +175,7 @@ int main (int argc, char ** argv) {
     unused(argc);
     unused(argv);
 
+	SDL_assert(g_scene == nullptr);
 	g_scene = new SceneAlienTest();
 
     // initialize and load
